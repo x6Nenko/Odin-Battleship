@@ -96,3 +96,40 @@ test('receive correct attack', () => {
         }
     );
 });
+
+test('not all the ships have been sunk', () => {
+    const myShip = new Ship(3);
+    const mySecondShip = new Ship(2);
+    const myThirdShip = new Ship (1);
+    const gameboard = new Gameboard();
+
+    gameboard.placeShip(mySecondShip, "col", [8, 6]);
+    gameboard.placeShip(myThirdShip, "row", [4, 8]);
+
+    gameboard.placeShip(myShip, "row", [4, 4]);
+    gameboard.receiveAttack("5, 4");
+
+    expect(gameboard.isAllShipsSunk()).toBe(false);
+});
+
+test('all the ships have been sunk', () => {
+    const myShip = new Ship(3);
+    const mySecondShip = new Ship(2);
+    const myThirdShip = new Ship (1);
+    const gameboard = new Gameboard();
+
+    gameboard.placeShip(mySecondShip, "col", [8, 6]);
+    gameboard.placeShip(myThirdShip, "row", [4, 8]);
+    gameboard.placeShip(myShip, "row", [4, 4]);
+
+    gameboard.receiveAttack("4, 4");
+    gameboard.receiveAttack("5, 4");
+    gameboard.receiveAttack("6, 4");
+
+    gameboard.receiveAttack("8, 6");
+    gameboard.receiveAttack("8, 7");
+
+    gameboard.receiveAttack("4, 4");
+
+    expect(gameboard.isAllShipsSunk()).toBe(true);
+});

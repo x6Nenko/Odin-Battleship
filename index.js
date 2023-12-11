@@ -19,6 +19,7 @@ class Ship {
 class Gameboard {
     constructor() {
         this.board = {};
+        this.ships = [];
     };
 
     placeShip(ship, axis, initialCell) {
@@ -30,8 +31,7 @@ class Gameboard {
         const row = initialCell[0];
         const col = initialCell[1];
 
-        // 1 4
-        // 1 4  - 3 4
+        // place the ship on the board
         for (let index = 0; index < ship.length; index++) {
             if (axis === "row") {
                 const key = `${row + index}, ${col}`;
@@ -41,6 +41,8 @@ class Gameboard {
                 this.board[key] = ship;
             };
         };
+
+        this.ships.push(ship); // add the ship to the list of ships
     };
 
     isValidPlace(ship, axis, initialCell) {
@@ -71,7 +73,24 @@ class Gameboard {
             const ship = this.board[coordinates];
             return ship.hit();
         } else {
+            // track missed attack
             return this.board[coordinates] = null;
+        };
+    };
+
+    isAllShipsSunk() {
+        const ships = this.ships;
+
+        for (let i = 0; i < ships.length; i++) {
+            const ship = ships[i];
+
+            if (ship.sunk === false) {
+                // Return false if any ship is not sunk
+                return false;
+            };
+
+            // Return true if all ships are sunk
+            return true;
         };
     };
 };
