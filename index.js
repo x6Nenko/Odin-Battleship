@@ -65,6 +65,15 @@ class Gameboard {
 
         return true;
     };
+
+    receiveAttack(coordinates) {
+        if (coordinates in this.board) {
+            const ship = this.board[coordinates];
+            return ship.hit();
+        } else {
+            return this.board[coordinates] = null;
+        };
+    };
 };
 
 module.exports = {

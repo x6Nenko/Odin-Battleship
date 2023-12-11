@@ -63,3 +63,36 @@ test('do not place the ship if the place isnt valid, axis: col.', () => {
         }
     );
 });
+
+test('receive missed attack and record the coordinates of the missed shot', () => {
+    const myShip = new Ship(3);
+    const gameboard = new Gameboard();
+
+    gameboard.placeShip(myShip, "row", [4, 4]);
+    gameboard.receiveAttack("1, 4");
+
+    expect(gameboard.board).toEqual(
+        {
+            "1, 4": null,
+            "4, 4": myShip,
+            "5, 4": myShip,
+            "6, 4": myShip,
+        }
+    );
+});
+
+test('receive correct attack', () => {
+    const myShip = new Ship(3);
+    const gameboard = new Gameboard();
+
+    gameboard.placeShip(myShip, "row", [4, 4]);
+    gameboard.receiveAttack("5, 4");
+
+    expect(myShip).toEqual(
+        {
+        "hits": 1,
+        "length": 3,
+        "sunk": false,
+        }
+    );
+});
