@@ -1,4 +1,4 @@
-const Ship = require('../index');
+const { Ship } = require('../index');
 
 test('create new ship', () => {
     const myShip = new Ship(3);
