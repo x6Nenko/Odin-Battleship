@@ -54,6 +54,7 @@ class Gameboard {
                 const key = `${row + index}, ${col}`;
                 
                 if (key in this.board) {
+                    // the place isn't valid
                     return false;
                 };
             } else if (axis === "col") {
@@ -70,8 +71,17 @@ class Gameboard {
 
     receiveAttack(coordinates) {
         if (coordinates in this.board) {
+            if (this.board[coordinates] === null) {
+                // these coordinates were already attacked
+                return null;
+            };
+
+            // attack found ship
             const ship = this.board[coordinates];
-            return ship.hit();
+            ship.hit();
+
+            // track succesfull attack
+            return this.board[coordinates] = null;
         } else {
             // track missed attack
             return this.board[coordinates] = null;
@@ -95,7 +105,46 @@ class Gameboard {
     };
 };
 
+class Player {
+    constructor(name, gameboard) {
+        this.name = name;
+        this.gameboard = gameboard;
+        this.isTurn = false;
+    };
+
+    attack(enemy, coordinates) {
+        return enemy.gameboard.receiveAttack(coordinates);
+    };
+
+    randomAttack(enemy) {
+        let randomCoordinates;
+
+        do {
+            randomCoordinates = this.generateRandomCoordinates();
+        } while (!this.isValidMove(enemy.gameboard, randomCoordinates));
+
+        return this.attack(enemy, randomCoordinates);
+    };
+
+    generateRandomCoordinates() {
+        const row = Math.floor(Math.random() * 10);
+        const col = Math.floor(Math.random() * 10);
+
+        return `${row}, ${col}`;
+    };
+
+    isValidMove(gameboard, coordinates) {
+        if (coordinates in gameboard.board && gameboard.board[coordinates] === null) {
+            // those coordinates were already attacked
+            return false;
+        };
+
+        return true;
+    };
+};
+
 module.exports = {
     Ship,
     Gameboard,
+    Player,
 };

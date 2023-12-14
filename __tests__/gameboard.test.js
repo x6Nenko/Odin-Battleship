@@ -97,6 +97,33 @@ test('receive correct attack', () => {
     );
 });
 
+test('attack on the same cell did not counts', () => {
+    const myShip = new Ship(3);
+    const gameboard = new Gameboard();
+
+    gameboard.placeShip(myShip, "row", [4, 4]);
+    gameboard.receiveAttack("5, 4");
+    gameboard.receiveAttack("5, 4");
+
+    console.log(gameboard.board);
+
+    expect(myShip).toEqual(
+        {
+        "hits": 1,
+        "length": 3,
+        "sunk": false,
+        }
+    );
+
+    expect(gameboard.board).toEqual(
+        {
+            "4, 4": myShip,
+            "5, 4": null,
+            "6, 4": myShip,
+        }
+    );
+});
+
 test('not all the ships have been sunk', () => {
     const myShip = new Ship(3);
     const mySecondShip = new Ship(2);
