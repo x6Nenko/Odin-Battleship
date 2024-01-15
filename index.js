@@ -20,6 +20,7 @@ class Gameboard {
     constructor() {
         this.board = {};
         this.ships = [];
+        this.lastReceivedAttackInfo = null;
     };
 
     placeShip(ship, axis, initialCell) {
@@ -28,7 +29,9 @@ class Gameboard {
             return false;
         };
 
+        // axis Y
         const row = initialCell[0];
+        // axis X
         const col = initialCell[1];
 
         // place the ship on the board
@@ -71,9 +74,9 @@ class Gameboard {
 
     receiveAttack(coordinates) {
         if (coordinates in this.board) {
-            if (this.board[coordinates] === null) {
+            if (this.board[coordinates] === null || this.board[coordinates] === "hit") {
                 // these coordinates were already attacked
-                return null;
+                return false;
             };
 
             // attack found ship
@@ -81,9 +84,11 @@ class Gameboard {
             ship.hit();
 
             // track succesfull attack
-            return this.board[coordinates] = null;
+            this.lastReceivedAttackInfo = {"coordinates": coordinates, "result": "hit"};
+            return this.board[coordinates] = "hit";
         } else {
             // track missed attack
+            this.lastReceivedAttackInfo = {"coordinates": coordinates, "result": "null"};
             return this.board[coordinates] = null;
         };
     };
@@ -106,10 +111,10 @@ class Gameboard {
 };
 
 class Player {
-    constructor(name, gameboard) {
+    constructor(name, gameboard, isTurn) {
         this.name = name;
         this.gameboard = gameboard;
-        this.isTurn = false;
+        this.isTurn = isTurn;
     };
 
     attack(enemy, coordinates) {
@@ -137,14 +142,148 @@ class Player {
         if (coordinates in gameboard.board && gameboard.board[coordinates] === null) {
             // those coordinates were already attacked
             return false;
+        } else if (coordinates in gameboard.board && gameboard.board[coordinates] === "hit") {
+            // those coordinates were already attacked
+            return false;
         };
 
         return true;
     };
+
+    // from player to computer or vice versa
+    changeTurn(from, to) {
+        from.isTurn = false;
+        to.isTurn = true;
+    };
 };
 
-module.exports = {
-    Ship,
-    Gameboard,
-    Player,
+class Game {
+    // add to constructor last attack info
+    constructor(dom) {
+        this.dom = dom;
+        this.playerGameboard = null;
+        this.computerGameboard = null;
+        this.player = null;
+        this.computer = null;
+    };
+
+    setUpNewGame() {
+        this.createBoards();
+        this.createPlayers();
+        this.placeTheShips();
+    };
+
+    createBoards() {
+        this.playerGameboard = new Gameboard();
+        this.computerGameboard = new Gameboard();
+    };
+
+    createPlayers() {
+        this.player = new Player("nickname", this.playerGameboard, true);
+        this.computer = new Player("computer", this.computerGameboard, false);
+    }
+
+    placeTheShips() {
+        const playerCarrier = new Ship(5);
+        const playerBattleship = new Ship(4);
+        const playerCruiser = new Ship(3);
+        const playerSubmarine = new Ship(2);
+        const playerDestroyer = new Ship(1);
+    
+        const computerCarrier = new Ship(5);
+        const computerBattleship = new Ship(4);
+        const computerCruiser = new Ship(3);
+        const computerSubmarine = new Ship(2);
+        const computerDestroyer = new Ship(1);
+    
+        this.playerGameboard.placeShip(playerCarrier, "row", [2, 2]);
+        this.playerGameboard.placeShip(playerBattleship, "col", [9, 1]);
+        this.playerGameboard.placeShip(playerSubmarine, "col", [8, 6]);
+        this.playerGameboard.placeShip(playerDestroyer, "row", [4, 8]);
+        this.playerGameboard.placeShip(playerCruiser, "row", [4, 4]);
+    
+        this.computerGameboard.placeShip(computerCarrier, "row", [2, 2]);
+        this.computerGameboard.placeShip(computerBattleship, "col", [9, 1]);
+        this.computerGameboard.placeShip(computerSubmarine, "col", [8, 6]);
+        this.computerGameboard.placeShip(computerDestroyer, "row", [4, 8]);
+        this.computerGameboard.placeShip(computerCruiser, "row", [4, 4]);
+    };
+
+    // shouldnt i move 2 functions below to player class?
+    // i guess nop
+    whoseTurn() {
+        if (this.player.isTurn) {
+            return "player";
+        } else {
+            return "computer";
+        };
+    };
+
+    isAllShipsSunk(enemy) {
+        if (enemy === "player") {
+            const playerShips = this.player.gameboard.ships;
+            return playerShips.every(ship => ship.sunk);
+        } else if (enemy === "computer") {
+            const computerShips = this.computer.gameboard.ships;
+            return computerShips.every(ship => ship.sunk);
+        };
+    };
+
+    checkAndProceed(enemy) {
+        // check if enemy still has ships and continue the game if so
+        if (this.isAllShipsSunk(enemy)) {
+            // end the game when the enemy has no ships anymore
+            return this.restartTheGame();
+        };
+        // change turn
+        // if its computers turn - computer automatically attacks player
+        if (enemy === "computer") {
+            // it runs when player used its turn
+            this.player.changeTurn(this.player, this.computer);
+
+            // now its computer turn, so we can run it right away
+            setTimeout(() => {
+                this.handleComputersRandomAttack();
+            }, 1000);
+        } else {
+            // computer used its turn
+            this.computer.changeTurn(this.computer, this.player)
+        }
+    };
+
+    // helper function that calls attack from player class
+    // and saves info about latest attack
+    handlePlayersAttack(coordinates) {
+        // do not accept attack on the same cell
+        if (this.player.attack(this.computer, coordinates) === false) {
+            return null;
+        };
+        // attack
+        this.player.attack(this.computer, coordinates);
+
+        // change styling of the square depending on result
+        const latestAttackInfo = this.computer.gameboard.lastReceivedAttackInfo;
+        // e = enemy (computer board)
+        this.dom.getLastAttackInfo("e", latestAttackInfo);
+
+        this.checkAndProceed("computer");
+    };
+
+    handleComputersRandomAttack() {
+        this.computer.randomAttack(this.player);
+        const latestAttackInfo = this.player.gameboard.lastReceivedAttackInfo;
+        // f = friendly (player board)
+        this.dom.getLastAttackInfo("f", latestAttackInfo);
+        this.checkAndProceed("player");
+    };
+
+    restartTheGame() {
+        this.setUpNewGame();
+        this.dom.updateDOM();
+    };
 };
+
+// const game = new Game();
+// game.setUpNewGame();
+
+export { Ship, Gameboard, Player, Game };

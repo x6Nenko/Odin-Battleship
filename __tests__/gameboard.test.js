@@ -1,4 +1,4 @@
-const { Gameboard, Ship } = require('../index');
+import { Ship, Gameboard } from "../index";
 
 test('place the new ship if the place is valid, axis: row.', () => {
     const myShip = new Ship(3);
@@ -105,8 +105,6 @@ test('attack on the same cell did not counts', () => {
     gameboard.receiveAttack("5, 4");
     gameboard.receiveAttack("5, 4");
 
-    console.log(gameboard.board);
-
     expect(myShip).toEqual(
         {
         "hits": 1,
@@ -118,7 +116,7 @@ test('attack on the same cell did not counts', () => {
     expect(gameboard.board).toEqual(
         {
             "4, 4": myShip,
-            "5, 4": null,
+            "5, 4": "hit",
             "6, 4": myShip,
         }
     );

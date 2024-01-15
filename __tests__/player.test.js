@@ -1,17 +1,17 @@
-const { Gameboard, Ship, Player } = require('../index');
+import { Ship, Gameboard, Player } from "../index";
 
 test('create new players', () => {
     const playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
 
-    const player = new Player("nickname", playerGameboard);
-    const computer = new Player("computer", computerGameboard);
+    const player = new Player("nickname", playerGameboard, true);;
+    const computer = new Player("computer", computerGameboard, false);
 
     expect(player.name).toEqual('nickname');
     expect(player.gameboard).toBeInstanceOf(Gameboard);
     expect(player.gameboard.board).toEqual({});
     expect(player.gameboard.ships).toEqual([]);
-    expect(player.isTurn).toBe(false);
+    expect(player.isTurn).toBe(true);
     
     expect(computer.name).toEqual('computer');
     expect(computer.gameboard).toBeInstanceOf(Gameboard);
@@ -24,8 +24,8 @@ test('attack enemy gameboard', () => {
     const playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
 
-    const player = new Player("nickname", playerGameboard);
-    const computer = new Player("computer", computerGameboard);
+    const player = new Player("nickname", playerGameboard, true);;
+    const computer = new Player("computer", computerGameboard, false);
 
     const playerCarrier = new Ship(5);
     const playerBattleship = new Ship(4);
@@ -47,15 +47,15 @@ test('attack enemy gameboard', () => {
 
     player.attack(computer, "4, 4");
 
-    expect(computer.gameboard.board["4, 4"]).toBe(null);
+    expect(computer.gameboard.board["4, 4"]).toBe("hit");
 });
 
 test('check if random move is valid', () => {
     const playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
 
-    const player = new Player("nickname", playerGameboard);
-    const computer = new Player("computer", computerGameboard);
+    const player = new Player("nickname", playerGameboard, true);;
+    const computer = new Player("computer", computerGameboard, false);
 
     const playerCruiser = new Ship(3);
 
@@ -72,8 +72,8 @@ test('make random attack', () => {
     const playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
 
-    const player = new Player("nickname", playerGameboard);
-    const computer = new Player("computer", computerGameboard);
+    const player = new Player("nickname", playerGameboard, true);;
+    const computer = new Player("computer", computerGameboard, false);
 
     const playerCruiser = new Ship(3);
     const computerCruiser = new Ship(3);
@@ -89,9 +89,26 @@ test('make random attack', () => {
         {
         "board": {
             "4, 4": {"hits": 1, "length": 3, "sunk": false}, 
-            "5, 4": null, "6, 4": {"hits": 1, "length": 3, "sunk": false}
+            "5, 4": "hit", "6, 4": {"hits": 1, "length": 3, "sunk": false}
         }, 
-        "ships": [{"hits": 1, "length": 3, "sunk": false}]
-        }
+        "ships": [{"hits": 1, "length": 3, "sunk": false}],
+        "lastReceivedAttackInfo": {
+            "coordinates": "5, 4",
+            "result": "hit",
+        },
+        },
     );
+});
+
+test('change the turn from player to computer', () => {
+    const playerGameboard = new Gameboard();
+    const computerGameboard = new Gameboard();
+
+    const player = new Player("nickname", playerGameboard, true);;
+    const computer = new Player("computer", computerGameboard, false);
+
+    player.changeTurn(player, computer);
+
+    expect(player.isTurn).toEqual(false);
+    expect(computer.isTurn).toEqual(true);
 });
