@@ -52,8 +52,18 @@ class Gameboard {
         const row = initialCell[0];
         const col = initialCell[1];
 
+        if (row > 9 || col > 9) {
+            // return if it goes outside of the board
+            return false;
+        };
+
         for (let index = 0; index < ship.length; index++) {
+
             if (axis === "row") {
+                if ((row + index) > 9) {
+                    return false;
+                };
+
                 const key = `${row + index}, ${col}`;
                 
                 if (key in this.board) {
@@ -61,6 +71,10 @@ class Gameboard {
                     return false;
                 };
             } else if (axis === "col") {
+                if ((col + index) > 9) {
+                    return false;
+                };
+
                 const key = `${row}, ${col + index}`;
                 
                 if (key in this.board) {
@@ -131,11 +145,31 @@ class Player {
         return this.attack(enemy, randomCoordinates);
     };
 
+    // run function below until there is no valid place for a ship and then place it
+    findRandomPlaceForShip() {
+        let randomCoordinates;
+        const randomAxis = this.generateRandomAxis();
+
+        do {
+            randomCoordinates = this.generateRandomCoordinates();
+        } while (!this.isValidMove(this.gameboard, randomCoordinates));
+
+        // return this.gameboard.placeShip();
+        const coordinatesArray = randomCoordinates.split(',').map(Number);
+        return [randomAxis, coordinatesArray];
+    };
+
     generateRandomCoordinates() {
         const row = Math.floor(Math.random() * 10);
         const col = Math.floor(Math.random() * 10);
 
         return `${row}, ${col}`;
+    };
+
+    // for random ship placement
+    generateRandomAxis() {
+        const random = Math.floor(Math.random() * 2);
+        return random === 0 ? "row" : "col";
     };
 
     isValidMove(gameboard, coordinates) {
@@ -195,18 +229,28 @@ class Game {
         const computerCruiser = new Ship(3);
         const computerSubmarine = new Ship(2);
         const computerDestroyer = new Ship(1);
-    
-        this.playerGameboard.placeShip(playerCarrier, "row", [2, 2]);
-        this.playerGameboard.placeShip(playerBattleship, "col", [9, 1]);
-        this.playerGameboard.placeShip(playerSubmarine, "col", [8, 6]);
-        this.playerGameboard.placeShip(playerDestroyer, "row", [4, 8]);
-        this.playerGameboard.placeShip(playerCruiser, "row", [4, 4]);
-    
-        this.computerGameboard.placeShip(computerCarrier, "row", [2, 2]);
-        this.computerGameboard.placeShip(computerBattleship, "col", [9, 1]);
-        this.computerGameboard.placeShip(computerSubmarine, "col", [8, 6]);
-        this.computerGameboard.placeShip(computerDestroyer, "row", [4, 8]);
-        this.computerGameboard.placeShip(computerCruiser, "row", [4, 4]);
+
+        this.placeRandomShip(playerCarrier, this.playerGameboard);
+        this.placeRandomShip(playerBattleship, this.playerGameboard);
+        this.placeRandomShip(playerSubmarine, this.playerGameboard);
+        this.placeRandomShip(playerDestroyer, this.playerGameboard);
+        this.placeRandomShip(playerCruiser, this.playerGameboard);
+
+        this.placeRandomShip(computerCarrier, this.computerGameboard);
+        this.placeRandomShip(computerBattleship, this.computerGameboard);
+        this.placeRandomShip(computerCruiser, this.computerGameboard);
+        this.placeRandomShip(computerSubmarine, this.computerGameboard);
+        this.placeRandomShip(computerDestroyer, this.computerGameboard);
+    };
+
+    placeRandomShip(ship, whichGameboard) {
+        let randomPlace;
+
+        do {
+            randomPlace = this.player.findRandomPlaceForShip();
+        } while (!whichGameboard.isValidPlace(ship, randomPlace[0], randomPlace[1]));
+
+        whichGameboard.placeShip(ship, randomPlace[0], randomPlace[1]);
     };
 
     // shouldnt i move 2 functions below to player class?

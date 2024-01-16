@@ -17,120 +17,59 @@ test('create new players', () => {
 });
 
 test('place the ships', () => {
-    const game = new Game();
-    game.createBoards();
-    game.createPlayers();
-    game.placeTheShips();
+  const game = new Game();
+  game.createBoards();
+  game.createPlayers();
+  game.placeTheShips();
 
-    expect(game.player.gameboard).toEqual({
-        board: {
-            '2, 2': expect.any(Ship),
-            '3, 2': expect.any(Ship),
-            '4, 2': expect.any(Ship),
-            '5, 2': expect.any(Ship),
-            '6, 2': expect.any(Ship),
-            '9, 1': expect.any(Ship),
-            '9, 2': expect.any(Ship),
-            '9, 3': expect.any(Ship),
-            '9, 4': expect.any(Ship),
-            '8, 6': expect.any(Ship),
-            '8, 7': expect.any(Ship),
-            '4, 8': expect.any(Ship),
-            '4, 4': expect.any(Ship),
-            '5, 4': expect.any(Ship),
-            '6, 4': expect.any(Ship),
-        },
-        ships: [
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-        ],
-        lastReceivedAttackInfo: null,
-    });
+  const expectShip = expect.objectContaining({
+      hits: expect.any(Number),
+      length: expect.any(Number),
+      sunk: expect.any(Boolean),
+  });
+
+  const expectGameboard = (gameboard) => {
+      expect(Object.keys(gameboard.board).length).toBeGreaterThan(0);
+      expect(gameboard.ships).toHaveLength(5);
+      expect(gameboard.lastReceivedAttackInfo).toBeNull();
+
+      // Test each ship in the board
+      Object.values(gameboard.board).forEach(ship => {
+          expect(ship).toEqual(expectShip);
+      });
+  };
+
+  expectGameboard(game.player.gameboard);
 });
+
 
 test('set up the game by one helper function', () => {
     const game = new Game();
     game.setUpNewGame();
 
-    expect(game).toEqual({
-        dom: undefined,
-        playerGameboard: {
-          board: {
-            '2, 2': expect.any(Ship),
-            '3, 2': expect.any(Ship),
-            '4, 2': expect.any(Ship),
-            '5, 2': expect.any(Ship),
-            '6, 2': expect.any(Ship),
-            '9, 1': expect.any(Ship),
-            '9, 2': expect.any(Ship),
-            '9, 3': expect.any(Ship),
-            '9, 4': expect.any(Ship),
-            '8, 6': expect.any(Ship),
-            '8, 7': expect.any(Ship),
-            '4, 8': expect.any(Ship),
-            '4, 4': expect.any(Ship),
-            '5, 4': expect.any(Ship),
-            '6, 4': expect.any(Ship),
-          },
-          ships: [
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-          ],
-          lastReceivedAttackInfo: null,
-        },
-        computerGameboard: {
-          board: {
-            '2, 2': expect.any(Ship),
-            '3, 2': expect.any(Ship),
-            '4, 2': expect.any(Ship),
-            '5, 2': expect.any(Ship),
-            '6, 2': expect.any(Ship),
-            '9, 1': expect.any(Ship),
-            '9, 2': expect.any(Ship),
-            '9, 3': expect.any(Ship),
-            '9, 4': expect.any(Ship),
-            '8, 6': expect.any(Ship),
-            '8, 7': expect.any(Ship),
-            '4, 8': expect.any(Ship),
-            '4, 4': expect.any(Ship),
-            '5, 4': expect.any(Ship),
-            '6, 4': expect.any(Ship),
-          },
-          ships: [
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-            expect.any(Ship),
-          ],
-          lastReceivedAttackInfo: null,
-        },
-        player: {
-          name: 'nickname',
-          gameboard: {
-            board: expect.any(Object),
-            ships: expect.any(Array),
-            lastReceivedAttackInfo: null,
-          },
-          isTurn: true,
-        },
-        computer: {
-          name: 'computer',
-          gameboard: {
-            board: expect.any(Object),
-            ships: expect.any(Array),
-            lastReceivedAttackInfo: null,
-          },
-          isTurn: false,
-        },
-      });
+    // Test basic properties
+    expect(game.dom).toBeUndefined();
+    expect(game.player.isTurn).toBe(true);
+    expect(game.computer.isTurn).toBe(false);
+
+    // Test gameboard structure and ships
+    const expectGameboard = (gameboard) => {
+        expect(Object.keys(gameboard.board).length).toBeGreaterThan(0);
+        expect(gameboard.ships).toHaveLength(5);
+        expect(gameboard.lastReceivedAttackInfo).toBeNull();
+        
+        // Test each ship in the board
+        Object.values(gameboard.board).forEach(ship => {
+            expect(ship.hits).toBe(0);
+            expect(ship.length).toBeGreaterThan(0);
+            expect(ship.sunk).toBe(false);
+        });
+    };
+
+    expectGameboard(game.playerGameboard);
+    expectGameboard(game.computerGameboard);
 });
+
 
 test('whose turn function shows that now is the player turn', () => {
     const game = new Game();
