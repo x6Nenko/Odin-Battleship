@@ -243,6 +243,10 @@ class Game {
         this.placeRandomShip(computerDestroyer, this.computerGameboard);
     };
 
+    placeManualyShip() {
+        // TODO
+    };
+
     placeRandomShip(ship, whichGameboard) {
         let randomPlace;
 
@@ -279,8 +283,9 @@ class Game {
             // end the game when the enemy has no ships anymore
             return this.restartTheGame();
         };
+
         // change turn
-        // if its computers turn - computer automatically attacks player
+        // since its computers turn - computer automatically attacks player
         if (enemy === "computer") {
             // it runs when player used its turn
             this.player.changeTurn(this.player, this.computer);
@@ -310,6 +315,12 @@ class Game {
         // e = enemy (computer board)
         this.dom.getLastAttackInfo("e", latestAttackInfo);
 
+        if (latestAttackInfo["result"] === "hit" && !this.isAllShipsSunk("computer")) {
+            // when attack is succesfull and there are still ships left - keep turn for a player
+            return null;
+        };
+
+        // missed attack or when there are no ships left anymore requires further process
         this.checkAndProceed("computer");
     };
 
@@ -318,6 +329,15 @@ class Game {
         const latestAttackInfo = this.player.gameboard.lastReceivedAttackInfo;
         // f = friendly (player board)
         this.dom.getLastAttackInfo("f", latestAttackInfo);
+
+        if (latestAttackInfo["result"] === "hit" && !this.isAllShipsSunk("player")) {
+            // when attack is succesfull and there are still ships left - keep turn for a computer
+            console.log("keep");
+            return setTimeout(() => {
+                this.handleComputersRandomAttack();
+            }, 1000);
+        };
+
         this.checkAndProceed("player");
     };
 
