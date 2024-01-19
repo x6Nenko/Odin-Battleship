@@ -85,3 +85,31 @@ test('whose turn function shows that now is the computer turn', () => {
 
     expect(game.whoseTurn()).toEqual("computer");
 });
+
+test('after succesfull attack player keeps its turn', () => {
+    const mockDom = {
+        getLastAttackInfo: jest.fn(),
+    };
+
+    const game = new Game(mockDom); // Pass the mockDom to the Game constructor
+
+    game.createBoards();
+    game.createPlayers();
+
+    const playerCarrier = new Ship(5);
+    const computerCarrier = new Ship(5);
+
+    game.playerGameboard.placeShip(playerCarrier, "row", [0, 0]);
+    game.computerGameboard.placeShip(computerCarrier, "row", [0, 0]);
+
+    expect(game.whoseTurn()).toEqual("player");
+
+    game.handlePlayersAttack("0, 0");
+    expect(game.whoseTurn()).toEqual("player");
+
+    game.handlePlayersAttack("1, 0");
+    expect(game.whoseTurn()).toEqual("player");
+
+    game.handlePlayersAttack("2, 0");
+    expect(game.whoseTurn()).toEqual("player");
+});

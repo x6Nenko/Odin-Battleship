@@ -138,6 +138,15 @@ class Player {
     randomAttack(enemy) {
         let randomCoordinates;
 
+        if (enemy.gameboard.lastReceivedAttackInfo !== null) {
+            // when its null - means there are no received attacks yet
+            if (enemy.gameboard.lastReceivedAttackInfo["result"] === "hit") {
+                // if previous attack was succesfull - attack nearby coordinates
+                randomCoordinates = this.generateNearbyCoordinates(enemy.gameboard.lastReceivedAttackInfo["coordinates"], enemy);
+                return this.attack(enemy, randomCoordinates);
+            }
+        };
+
         do {
             randomCoordinates = this.generateRandomCoordinates();
         } while (!this.isValidMove(enemy.gameboard, randomCoordinates));
@@ -164,6 +173,35 @@ class Player {
         const col = Math.floor(Math.random() * 10);
 
         return `${row}, ${col}`;
+    };
+
+    generateNearbyCoordinates(center, enemy) {
+        const [row, col] = center.split(",").map(Number);
+        
+        // Define the possible directions (up, down, left, right)
+        const directions = [
+            [-1, 0], // Up
+            [1, 0],  // Down
+            [0, -1], // Left
+            [0, 1],  // Right
+        ];
+    
+        // Shuffle the directions randomly
+        const shuffledDirections = directions.sort(() => Math.random() - 0.5);
+    
+        // Try each direction until a valid coordinate is found
+        for (const [rowOffset, colOffset] of shuffledDirections) {
+            const newRow = row + rowOffset;
+            const newCol = col + colOffset;
+            const newCoordinates = `${newRow}, ${newCol}`;
+    
+            if (this.isValidMove(enemy.gameboard, newCoordinates)) {
+                return newCoordinates;
+            }
+        }
+    
+        // If no valid nearby coordinate is found, fall back to generating a random one
+        return this.generateRandomCoordinates();
     };
 
     // for random ship placement
@@ -324,7 +362,8 @@ class Game {
         this.checkAndProceed("computer");
     };
 
-    handleComputersRandomAttack() {
+    handleComputersRandomAttack(isRepeated) {
+        // isRepeated = true or false, if true - give randomAttack latestAttackInfo
         this.computer.randomAttack(this.player);
         const latestAttackInfo = this.player.gameboard.lastReceivedAttackInfo;
         // f = friendly (player board)
