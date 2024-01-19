@@ -129,6 +129,8 @@ class Player {
         this.name = name;
         this.gameboard = gameboard;
         this.isTurn = isTurn;
+        this.isComputerMissedNearbyAttack = false;
+        this.preLastAttackInfo = {};
     };
 
     attack(enemy, coordinates) {
@@ -138,13 +140,41 @@ class Player {
     randomAttack(enemy) {
         let randomCoordinates;
 
+        console.log(enemy.gameboard.lastReceivedAttackInfo);
+
         if (enemy.gameboard.lastReceivedAttackInfo !== null) {
-            // when its null - means there are no received attacks yet
+            // because when its null - means there are no received attacks yet
             if (enemy.gameboard.lastReceivedAttackInfo["result"] === "hit") {
                 // if previous attack was succesfull - attack nearby coordinates
                 randomCoordinates = this.generateNearbyCoordinates(enemy.gameboard.lastReceivedAttackInfo["coordinates"], enemy);
-                return this.attack(enemy, randomCoordinates);
-            }
+
+                // save info about attack to process it further in case computer not finishes the ship
+                this.preLastAttackInfo = {...enemy.gameboard.lastReceivedAttackInfo};
+
+                const result = this.attack(enemy, randomCoordinates);
+
+                console.log(result);
+
+                if (result === null) {
+                    console.log("opa pc missed it");
+                    this.isComputerMissedNearbyAttack = true;
+                };
+
+                return result
+            } else if (this.isComputerMissedNearbyAttack === true) {
+                // if previous attack was succesfull - attack nearby coordinates
+                randomCoordinates = this.generateNearbyCoordinates(this.preLastAttackInfo["coordinates"], enemy);
+
+                const result = this.attack(enemy, randomCoordinates);
+
+                console.log(result);
+
+                if (result !== null) {
+                    this.isComputerMissedNearbyAttack = false;
+                };              
+
+                return result
+            };
         };
 
         do {
@@ -194,14 +224,24 @@ class Player {
             const newRow = row + rowOffset;
             const newCol = col + colOffset;
             const newCoordinates = `${newRow}, ${newCol}`;
-    
-            if (this.isValidMove(enemy.gameboard, newCoordinates)) {
-                return newCoordinates;
-            }
-        }
+            console.log("hit", newCoordinates);
+
+            if (newRow >= 0 && newRow <= 9 && newCol >= 0 && newCol <= 9) {
+                if (this.isValidMove(enemy.gameboard, newCoordinates)) {
+                    return newCoordinates;
+                };
+            };
+        };
     
         // If no valid nearby coordinate is found, fall back to generating a random one
-        return this.generateRandomCoordinates();
+        // or erase latest received attack so there are no endless loop happening and
+        // remove do while below and return this.generateRandomCoordinates();
+        let newRandomCoordinates;
+        do {
+            newRandomCoordinates = this.generateRandomCoordinates();
+        } while (!this.isValidMove(enemy.gameboard, newRandomCoordinates));
+
+        return newRandomCoordinates;
     };
 
     // for random ship placement

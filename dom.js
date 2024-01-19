@@ -77,7 +77,8 @@ class DOM {
             console.log(isShip);
 
             const domSquare = document.getElementById(coordinates);
-            domSquare.style.backgroundColor = "#00ff00"
+            domSquare.style.backgroundColor = "#00ff00";
+            domSquare.style.padding = "2px";
         });
     };
 
