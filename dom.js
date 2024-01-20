@@ -5,11 +5,49 @@ class DOM {
         this.friendlyBoard = document.querySelector(".friendly-board");
         this.enemyBoard = document.querySelector(".enemy-board");
         this.showWhosTurn = document.getElementById("turn");
+        // ships
+        this.carrier = document.querySelector(".carrier");
         // bind the functions below because event handlers are unpredictable
         // when it comes to "this" functionality
         this.handleBoardClick = this.handleBoardClick.bind(this);
         this.styleAttackedCoordinates = this.styleAttackedCoordinates.bind(this);
     };
+
+    // displayTacticalStageBoard() {
+    //     for (let index = 0; index < 10; index++) {
+    //         for (let j = 0; j < 10; j++) {
+    //             const friendlyDiv = document.createElement("div");
+    //             friendlyDiv.id = `f-${index}-${j}`;
+    //             this.friendlyBoard.appendChild(friendlyDiv);
+    //             //friendlyDiv.addEventListener("click", this.handleBoardClick);
+    //             friendlyDiv.addEventListener("dragover", this.dragOver);
+    //             friendlyDiv.addEventListener("drop", this.dropShip);
+    //         };
+    //     };
+    // };
+
+    // displayDragableShips() {
+    //     const carrier = this.carrier;
+    //     carrier.addEventListener("dragstart", this.dragStart);
+    // };
+
+    // dragOver(event) {
+    //     event.preventDefault();
+    //     //console.log(event.target);
+    // };
+
+    // dropShip(event) {
+    //     event.preventDefault();
+    //     const startId = event.target.id;
+    //     console.log(startId);
+    // };
+
+    // dragStart(event) {
+    //     event.preventDefault();
+    //     draggedShipLength = event.childNodes.length;
+
+    //     console.log(event.target);
+    // };
 
     displayBoards() {
         for (let index = 0; index < 10; index++) {
@@ -99,5 +137,6 @@ class DOM {
 const dom = new DOM();
 const game = new Game(dom);
 game.setUpNewGame();
+// dom.displayTacticalStageBoard();
 dom.displayBoards();
 dom.displayFriendlyShips();

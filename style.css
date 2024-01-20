@@ -25,3 +25,44 @@ main {
     text-align: center;
     margin-top: 50px;
 }
+
+.ships {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.carrier {
+    display: none;
+    background-color: green;
+    height: 250px;
+    width: 50px;
+}
+
+.battleship {
+    display: none;
+    background-color: green;
+    height: 200px;
+    width: 50px;
+}
+
+.submarine {
+    display: none;
+    background-color: green;
+    height: 150px;
+    width: 50px;
+}
+
+.cruiser {
+    display: none;
+    background-color: green;
+    height: 150px;
+    width: 50px;
+}
+
+.destroyer {
+    display: none;
+    background-color: green;
+    height: 100px;
+    width: 50px;
+}
