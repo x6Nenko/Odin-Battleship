@@ -13,41 +13,49 @@ class DOM {
         this.styleAttackedCoordinates = this.styleAttackedCoordinates.bind(this);
     };
 
-    // displayTacticalStageBoard() {
-    //     for (let index = 0; index < 10; index++) {
-    //         for (let j = 0; j < 10; j++) {
-    //             const friendlyDiv = document.createElement("div");
-    //             friendlyDiv.id = `f-${index}-${j}`;
-    //             this.friendlyBoard.appendChild(friendlyDiv);
-    //             //friendlyDiv.addEventListener("click", this.handleBoardClick);
-    //             friendlyDiv.addEventListener("dragover", this.dragOver);
-    //             friendlyDiv.addEventListener("drop", this.dropShip);
-    //         };
-    //     };
-    // };
+    displayTacticalStageBoard() {
+        for (let index = 0; index < 10; index++) {
+            for (let j = 0; j < 10; j++) {
+                const friendlyDiv = document.createElement("div");
+                friendlyDiv.id = `f-${index}-${j}`;
+                this.friendlyBoard.appendChild(friendlyDiv);
+                friendlyDiv.addEventListener("click", this.handleBoardClick);
+                friendlyDiv.addEventListener("dragover", this.dragOver);
+                friendlyDiv.addEventListener("drop", this.dropShip);
+            };
+        };
+    };
 
-    // displayDragableShips() {
-    //     const carrier = this.carrier;
-    //     carrier.addEventListener("dragstart", this.dragStart);
-    // };
+    displayDragableShips() {
+        const carrier = this.carrier;
+        carrier.addEventListener("dragstart", this.dragStart);
+    };
 
-    // dragOver(event) {
-    //     event.preventDefault();
-    //     //console.log(event.target);
-    // };
+    dragStart(event) {
+        // event.preventDefault();
+        // draggedShipLength = event.childNodes.length;
+        let draggedElement = event.target;
 
-    // dropShip(event) {
-    //     event.preventDefault();
-    //     const startId = event.target.id;
-    //     console.log(startId);
-    // };
+        // Create a clone of the dragged element
+        const dragImage = this.cloneNode(true);
 
-    // dragStart(event) {
-    //     event.preventDefault();
-    //     draggedShipLength = event.childNodes.length;
+        // Set the clone as the drag image
+        event.dataTransfer.setDragImage(dragImage, 0, 0);
+        console.log(event.target);
+    };
 
-    //     console.log(event.target);
-    // };
+    dragOver(event) {
+        event.preventDefault();
+        //console.log(event.target);
+    };
+
+    dropShip(event) {
+        event.preventDefault();
+        const startId = event.target.id;
+        console.log(startId);
+        // game.playerGameboard.placeShip();
+        game.placeManualyShip(startId);
+    };
 
     displayBoards() {
         for (let index = 0; index < 10; index++) {
@@ -137,6 +145,7 @@ class DOM {
 const dom = new DOM();
 const game = new Game(dom);
 game.setUpNewGame();
-// dom.displayTacticalStageBoard();
-dom.displayBoards();
-dom.displayFriendlyShips();
+dom.displayTacticalStageBoard();
+dom.displayDragableShips();
+// dom.displayBoards();
+// dom.displayFriendlyShips();

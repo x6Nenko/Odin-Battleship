@@ -359,7 +359,7 @@ class Game {
     setUpNewGame() {
         this.createBoards();
         this.createPlayers();
-        this.placeTheShips();
+        // this.placeTheShips();
     };
 
     createBoards() {
@@ -398,8 +398,15 @@ class Game {
         this.placeRandomShip(computerDestroyer, this.computerGameboard);
     };
 
-    placeManualyShip() {
+    placeManualyShip(initialCell) {
         // TODO
+        console.log(this.playerGameboard);
+        const playerCarrier = new Ship(5);
+        const coordinates = initialCell.split('-').slice(1).map(Number);
+        console.log(coordinates);
+
+        this.playerGameboard.placeShip(playerCarrier, "row", coordinates);
+        console.log(this.playerGameboard);
     };
 
     placeRandomShip(ship, whichGameboard) {
