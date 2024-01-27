@@ -52,7 +52,7 @@ class Gameboard {
         const row = initialCell[0];
         const col = initialCell[1];
 
-        if (row > 9 || col > 9) {
+        if (row > 9 || col > 9 || row < 0 || col < 0) {
             // return if it goes outside of the board
             return false;
         };
@@ -359,7 +359,8 @@ class Game {
     setUpNewGame() {
         this.createBoards();
         this.createPlayers();
-        // this.placeTheShips();
+        this.placeRandomShips();
+        this.dom.displayDragableShips();
     };
 
     createBoards() {
@@ -372,12 +373,12 @@ class Game {
         this.computer = new Player("computer", this.computerGameboard, false);
     }
 
-    placeTheShips() {
-        const playerCarrier = new Ship(5);
-        const playerBattleship = new Ship(4);
-        const playerCruiser = new Ship(3);
-        const playerSubmarine = new Ship(3);
-        const playerDestroyer = new Ship(2);
+    placeRandomShips() {
+        // const playerCarrier = new Ship(5);
+        // const playerBattleship = new Ship(4);
+        // const playerCruiser = new Ship(3);
+        // const playerSubmarine = new Ship(3);
+        // const playerDestroyer = new Ship(2);
     
         const computerCarrier = new Ship(5);
         const computerBattleship = new Ship(4);
@@ -385,11 +386,11 @@ class Game {
         const computerSubmarine = new Ship(3);
         const computerDestroyer = new Ship(2);
 
-        this.placeRandomShip(playerCarrier, this.playerGameboard);
-        this.placeRandomShip(playerBattleship, this.playerGameboard);
-        this.placeRandomShip(playerSubmarine, this.playerGameboard);
-        this.placeRandomShip(playerDestroyer, this.playerGameboard);
-        this.placeRandomShip(playerCruiser, this.playerGameboard);
+        // this.placeRandomShip(playerCarrier, this.playerGameboard);
+        // this.placeRandomShip(playerBattleship, this.playerGameboard);
+        // this.placeRandomShip(playerSubmarine, this.playerGameboard);
+        // this.placeRandomShip(playerDestroyer, this.playerGameboard);
+        // this.placeRandomShip(playerCruiser, this.playerGameboard);
 
         this.placeRandomShip(computerCarrier, this.computerGameboard);
         this.placeRandomShip(computerBattleship, this.computerGameboard);
@@ -398,15 +399,18 @@ class Game {
         this.placeRandomShip(computerDestroyer, this.computerGameboard);
     };
 
-    placeManualyShip(initialCell) {
-        // TODO
-        console.log(this.playerGameboard);
-        const playerCarrier = new Ship(5);
-        const coordinates = initialCell.split('-').slice(1).map(Number);
-        console.log(coordinates);
+    placeManualyShip(initialCell, shipLength) {
+        const newShip = new Ship(shipLength);
+        
+        if (!this.playerGameboard.isValidPlace(newShip, "row", initialCell)) {
+            // return false to DOM so it knows that ship wasn't placed
+            return false;
+        };
 
-        this.playerGameboard.placeShip(playerCarrier, "row", coordinates);
-        console.log(this.playerGameboard);
+        this.playerGameboard.placeShip(newShip, "row", initialCell);
+        this.dom.displayFriendlyShips();
+
+        return turn;
     };
 
     placeRandomShip(ship, whichGameboard) {

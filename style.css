@@ -32,36 +32,20 @@ main {
     gap: 10px;
 }
 
+.ship {
+
+}
+
+.ship-cell {
+    width: 35px;
+    height: 50px;
+    background-color: green;
+}
+
 .carrier {
-    background-color: green;
-    height: 250px;
-    width: 50px;
+    
 }
 
-.battleship {
-    display: none;
-    background-color: green;
-    height: 200px;
-    width: 50px;
-}
-
-.submarine {
-    display: none;
-    background-color: green;
-    height: 150px;
-    width: 50px;
-}
-
-.cruiser {
-    display: none;
-    background-color: green;
-    height: 150px;
-    width: 50px;
-}
-
-.destroyer {
-    display: none;
-    background-color: green;
-    height: 100px;
-    width: 50px;
+.highlighted {
+    background-color: lightblue;
 }
