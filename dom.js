@@ -9,6 +9,7 @@ class DOM {
         this.draggedShip = null;
         this.draggedShipCellIndex = null;
         this.initialCoordinatesForShipPlacement = null;
+        this.shipsContainer = document.querySelector(".ships");
         
         // bind the functions below because event handlers are unpredictable
         // when it comes to "this" functionality
@@ -40,6 +41,7 @@ class DOM {
                 let cell = document.createElement("div");
                 cell.classList.add("ship-cell");
                 cell.dataset.index = i;
+                cell.setAttribute("draggable", "false");
                 shipContainer.appendChild(cell);
             };
           
@@ -83,6 +85,7 @@ class DOM {
 
     mouseDown(event) {
         // 1.75) get ship cell info
+        event.stopPropagation();
         const shipCellIndex = event.target.getAttribute('data-index');
         this.draggedShipCellIndex = shipCellIndex;
     };
@@ -100,6 +103,11 @@ class DOM {
         if (game.placeManualyShip(this.initialCoordinatesForShipPlacement, shipLength)) {
             // ship was succesfully placed
             this.draggedShip.remove();
+        };
+        
+        if (this.shipsContainer.childElementCount === 0) {
+            // all ships were placed, time to start the fight
+            this.showWhosTurn.innerText = "Player Turn."
         };
     };
 
@@ -158,11 +166,6 @@ class DOM {
                 this.friendlyBoard.appendChild(friendlyDiv);
                 friendlyDiv.addEventListener("click", this.handleBoardClick);
 
-                friendlyDiv.addEventListener("dragover", this.dragOver.bind(this));
-                friendlyDiv.addEventListener("dragenter", this.highlightArea.bind(this, friendlyDiv));
-                friendlyDiv.addEventListener("dragleave", this.removeHighlight.bind(this, friendlyDiv));
-                friendlyDiv.addEventListener("drop", this.dropShip.bind(this));
-
                 const enemyDiv = document.createElement("div");
                 enemyDiv.id = `e-${index}-${j}`;
                 this.enemyBoard.appendChild(enemyDiv);
@@ -175,6 +178,11 @@ class DOM {
         const targetId = event.target.id;
         const targetDiv = event.target;
         const coordinates = targetId.slice(2).replace('-', ', ');
+
+        if (this.shipsContainer.childElementCount !== 0) {
+            // there is still ship placement phase
+            return null;
+        };
 
         // check whose turn to attack and if he clicks at enemy board
         if (game.whoseTurn() === "player" && targetId[0] === "e") {
@@ -231,20 +239,41 @@ class DOM {
         this.enemyBoard.textContent = "";
     }
 
+    intro() {
+        const introContainer = document.querySelector(".intro");
+        const mainContainer = document.getElementById("main");
+        const playerVsPlayerBtn = document.getElementById("vsPlayer");
+        const playerVsComputerBtn = document.getElementById("vsComputer");
+        const startGameBtn = document.getElementById("startGame");
+
+        // startGameBtn.addEventListener("click", () => {
+        //     console.log("huit");
+        //     this.displayBoards();
+        //     this.displayFriendlyShips();
+        //     this.addEventListenersToShips();
+        // });
+
+        startGameBtn.addEventListener("click", () => {
+            introContainer.style.display = "none";
+            mainContainer.style.display = "flex";
+            this.updateDOM();
+        });
+    };
+
     updateDOM() {
         this.clearBoards();
         this.displayBoards();
         this.displayFriendlyShips();
         this.addEventListenersToShips();
-        this.showWhosTurn.innerText = "Player Turn."
+        this.showWhosTurn.innerText = "Place the ships."
     };
 };
 
 const dom = new DOM();
 const game = new Game(dom);
 game.setUpNewGame();
-// dom.displayTacticalStageBoard();
+dom.intro();
 
-dom.displayBoards();
-dom.displayFriendlyShips();
-dom.addEventListenersToShips();
+// dom.displayBoards();
+// dom.displayFriendlyShips();
+// dom.addEventListenersToShips();

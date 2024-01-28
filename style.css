@@ -4,10 +4,21 @@
     box-sizing: border-box;
 }
 
-main {
-    display: flex;
+#main {
+    display: none;
     justify-content: space-evenly;
     margin-top: 50px;
+}
+
+.intro {
+    width: fit-content;
+    margin: 200px auto 0;
+}
+
+#startGame {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
 }
 
 .friendly-board, .enemy-board {
@@ -33,7 +44,7 @@ main {
 }
 
 .ship {
-
+    cursor: grab;
 }
 
 .ship-cell {
