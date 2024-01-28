@@ -12,15 +12,15 @@ test('create new players', () => {
     const game = new Game();
     game.createPlayers();
 
-    expect(game.player).toEqual({ name: 'nickname', gameboard: null, isTurn: true });
-    expect(game.computer).toEqual({ name: 'computer', gameboard: null, isTurn: false });
+    expect(game.player).toEqual({ name: 'nickname', gameboard: null, isTurn: true, isComputerMissedNearbyAttack: false, preLastAttackInfo: expect.any(Object) });
+    expect(game.computer).toEqual({ name: 'computer', gameboard: null, isTurn: false, isComputerMissedNearbyAttack: false, preLastAttackInfo: expect.any(Object) });
 });
 
-test('place the ships', () => {
+test('place the ships for computer', () => {
   const game = new Game();
   game.createBoards();
   game.createPlayers();
-  game.placeTheShips();
+  game.placeRandomShips();
 
   const expectShip = expect.objectContaining({
       hits: expect.any(Number),
@@ -39,21 +39,29 @@ test('place the ships', () => {
       });
   };
 
-  expectGameboard(game.player.gameboard);
+  expectGameboard(game.computer.gameboard);
 });
+
+// Mock DOM class
+class MockDOM {
+    displayDragableShips() {
+        // Do nothing
+    };
+};
 
 
 test('set up the game by one helper function', () => {
     const game = new Game();
+    game.dom = new MockDOM();
     game.setUpNewGame();
 
     // Test basic properties
-    expect(game.dom).toBeUndefined();
+    expect(game.dom).toBeDefined();
     expect(game.player.isTurn).toBe(true);
     expect(game.computer.isTurn).toBe(false);
 
     // Test gameboard structure and ships
-    const expectGameboard = (gameboard) => {
+    const expectComputerGameboard = (gameboard) => {
         expect(Object.keys(gameboard.board).length).toBeGreaterThan(0);
         expect(gameboard.ships).toHaveLength(5);
         expect(gameboard.lastReceivedAttackInfo).toBeNull();
@@ -66,13 +74,20 @@ test('set up the game by one helper function', () => {
         });
     };
 
-    expectGameboard(game.playerGameboard);
-    expectGameboard(game.computerGameboard);
+    const expectPlayerGameboard = (gameboard) => {
+        expect(Object.keys(gameboard.board).length).toBeDefined();
+        expect(gameboard.ships).toBeDefined();
+        expect(gameboard.lastReceivedAttackInfo).toBeNull();
+    };
+
+    expectPlayerGameboard(game.playerGameboard);
+    expectComputerGameboard(game.computerGameboard);
 });
 
 
 test('whose turn function shows that now is the player turn', () => {
     const game = new Game();
+    game.dom = new MockDOM();
     game.setUpNewGame();
 
     expect(game.whoseTurn()).toEqual("player");
@@ -80,6 +95,7 @@ test('whose turn function shows that now is the player turn', () => {
 
 test('whose turn function shows that now is the computer turn', () => {
     const game = new Game();
+    game.dom = new MockDOM();
     game.setUpNewGame();
     game.checkAndProceed("computer");
 

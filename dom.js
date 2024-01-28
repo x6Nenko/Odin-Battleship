@@ -235,6 +235,7 @@ class DOM {
         this.clearBoards();
         this.displayBoards();
         this.displayFriendlyShips();
+        this.addEventListenersToShips();
         this.showWhosTurn.innerText = "Player Turn."
     };
 };

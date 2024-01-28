@@ -131,9 +131,9 @@ class Player {
         this.isTurn = isTurn;
         this.isComputerMissedNearbyAttack = false;
         this.preLastAttackInfo = {};
-        this.queue = [];
-        this.queueDirection = "unknown";
-        this.succesfullQueueAttacks = [];
+        // this.queue = [];
+        // this.queueDirection = "unknown";
+        // this.succesfullQueueAttacks = [];
     };
 
     attack(enemy, coordinates) {
