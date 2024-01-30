@@ -508,7 +508,7 @@ class Game {
 
     restartTheGame() {
         this.setUpNewGame();
-        this.dom.updateDOM();
+        this.dom.outro();
     };
 };
 

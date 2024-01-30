@@ -139,9 +139,6 @@ class DOM {
 
     getNearbyCells(cell) {
         // 4) calculate nearby cells
-
-
-
         let hoveredCoordinates = cell.id.slice(2).replace('-', ', ');
         let row = hoveredCoordinates[0];
         let col = hoveredCoordinates[3];
@@ -246,15 +243,31 @@ class DOM {
         const playerVsComputerBtn = document.getElementById("vsComputer");
         const startGameBtn = document.getElementById("startGame");
 
-        // startGameBtn.addEventListener("click", () => {
-        //     console.log("huit");
-        //     this.displayBoards();
-        //     this.displayFriendlyShips();
-        //     this.addEventListenersToShips();
-        // });
-
         startGameBtn.addEventListener("click", () => {
             introContainer.style.display = "none";
+            mainContainer.style.display = "flex";
+            this.updateDOM();
+        });
+    };
+
+    outro() {
+        const outroContainer = document.querySelector(".outro");
+        const mainContainer = document.getElementById("main");
+        const restartGameBtn = document.getElementById("restartGame");
+        const winnerContainer = document.getElementById("winner");
+
+        if (this.showWhosTurn.innerText === "Computer Turn.") {
+            winnerContainer.innerText = "🎉🎉🎉 You won! 🎉🎉🎉"
+        } else {
+            winnerContainer.innerText = "Computer has won!"
+        };
+
+        this.showWhosTurn.innerText = "";
+        mainContainer.style.display = "none";
+        outroContainer.style.display = "block"
+
+        restartGameBtn.addEventListener("click", () => {
+            outroContainer.style.display = "none";
             mainContainer.style.display = "flex";
             this.updateDOM();
         });

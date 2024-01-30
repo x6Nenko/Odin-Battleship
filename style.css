@@ -15,7 +15,13 @@
     margin: 200px auto 0;
 }
 
-#startGame {
+.outro {
+    display: none;
+    width: fit-content;
+    margin: 200px auto 0;
+}
+
+#startGame, #restartGame {
     margin-top: 20px;
     width: 100%;
     padding: 10px;
