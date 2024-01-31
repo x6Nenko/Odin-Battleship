@@ -8,6 +8,7 @@ class DOM {
         // drag and drop
         this.draggedShip = null;
         this.draggedShipCellIndex = null;
+        this.draggedShipAxis = "row";
         this.initialCoordinatesForShipPlacement = null;
         this.shipsContainer = document.querySelector(".ships");
         
@@ -26,10 +27,13 @@ class DOM {
         this.dragLeave = this.dragLeave.bind(this);
         this.dropShip = this.dropShip.bind(this);
         this.highlightArea = this.highlightArea.bind(this);
+        this.rotateShips = this.rotateShips.bind(this);
     };
 
     displayDragableShips() {
         const shipSizes = [5, 4, 3, 3, 2];
+        this.draggedShipAxis = "row";
+        document.getElementById("rotateShips").style.display = "block";
 
         shipSizes.forEach(ship => {
             const shipContainer = document.createElement("div");
@@ -52,10 +56,11 @@ class DOM {
         // 0) Render all ships
     };
 
-    addEventListenersToShips() {
+    addDragAndDropEventListeners() {
         const ships = document.querySelectorAll(".ship");
         const friendlyBoardDiv = document.querySelector('.friendly-board');
         const boardCells = friendlyBoardDiv.querySelectorAll('div');
+        const rotateShipsBtn = document.getElementById("rotateShips");
 
         ships.forEach(ship => {
             ship.addEventListener("dragstart", this.dragStart);
@@ -70,6 +75,8 @@ class DOM {
             cell.addEventListener("dragleave", this.dragLeave);
             cell.addEventListener("drop", this.dropShip);
         });
+
+        rotateShipsBtn.addEventListener("click", this.rotateShips);
     };
 
     dragStart(event) {
@@ -100,23 +107,57 @@ class DOM {
     dropShip(event) {
         event.preventDefault();
         const shipLength = this.draggedShip.getAttribute('data-length');
-        if (game.placeManualyShip(this.initialCoordinatesForShipPlacement, shipLength)) {
+        if (game.placeManualyShip(this.initialCoordinatesForShipPlacement, this.draggedShipAxis, shipLength)) {
             // ship was succesfully placed
             this.draggedShip.remove();
         };
         
-        if (this.shipsContainer.childElementCount === 0) {
+        if (this.shipsContainer.childElementCount === 1) {
             // all ships were placed, time to start the fight
-            this.showWhosTurn.innerText = "Player Turn."
+            // ``=== 1 because there is a button``
+            // and unbing listeners
+            this.removeDragAndDropListeners();
+            this.showWhosTurn.innerText = "Player Turn.";
+            document.getElementById("rotateShips").style.display = "none";
         };
     };
 
     dragEnter(event) {
-
+        event.preventDefault();
     };
 
     dragLeave(event) {
         this.removeHighlight();
+    };
+
+    removeDragAndDropListeners() {
+        const friendlyBoardDiv = document.querySelector('.friendly-board');
+        const boardCells = friendlyBoardDiv.querySelectorAll('div');
+
+        document.removeEventListener("mousedown", this.mouseDown);
+
+        boardCells.forEach(cell => {
+            cell.removeEventListener("dragover", this.dragOver);
+            cell.removeEventListener("dragenter", this.dragEnter);
+            cell.removeEventListener("dragleave", this.dragLeave);
+            cell.removeEventListener("drop", this.dropShip);
+        });
+    };
+
+    rotateShips() {
+        const ships = document.querySelectorAll(".ship");
+        const shipCells = document.querySelectorAll(".ship-cell")
+
+        ships.forEach(ship => {
+            ship.classList.toggle("ship-col");
+        });
+        
+        shipCells.forEach(cell => {
+            cell.classList.toggle("ship-cell-col");
+        });
+
+        // switch axis
+        this.draggedShipAxis === "row" ? this.draggedShipAxis = "col" : this.draggedShipAxis = "row";
     };
     
     removeHighlight() {
@@ -143,12 +184,23 @@ class DOM {
         let row = hoveredCoordinates[0];
         let col = hoveredCoordinates[3];
         let shipLength = this.draggedShip.getAttribute('data-length');
-        let initialBoardCell = row - this.draggedShipCellIndex;
-        this.initialCoordinatesForShipPlacement = [initialBoardCell, Number(col)];
+        let initialBoardCell;
         let cellList = [];
 
-        for (let index = 0; index < shipLength; index++) {
-            cellList.push(`f-${initialBoardCell + index}-${col}`);
+        if (this.draggedShipAxis === "row") {
+            initialBoardCell = row - this.draggedShipCellIndex;
+            this.initialCoordinatesForShipPlacement = [initialBoardCell, Number(col)];
+
+            for (let index = 0; index < shipLength; index++) {
+                cellList.push(`f-${initialBoardCell + index}-${col}`);
+            };
+        } else if (this.draggedShipAxis === "col") {
+            initialBoardCell = col - this.draggedShipCellIndex;
+            this.initialCoordinatesForShipPlacement = [Number(row), initialBoardCell];
+
+            for (let index = 0; index < shipLength; index++) {
+                cellList.push(`f-${row}-${initialBoardCell + index}`);
+            };
         };
 
         // console.log(cellList);
@@ -176,7 +228,7 @@ class DOM {
         const targetDiv = event.target;
         const coordinates = targetId.slice(2).replace('-', ', ');
 
-        if (this.shipsContainer.childElementCount !== 0) {
+        if (this.shipsContainer.childElementCount !== 1) {
             // there is still ship placement phase
             return null;
         };
@@ -277,8 +329,8 @@ class DOM {
         this.clearBoards();
         this.displayBoards();
         this.displayFriendlyShips();
-        this.addEventListenersToShips();
-        this.showWhosTurn.innerText = "Place the ships."
+        this.addDragAndDropEventListeners();
+        this.showWhosTurn.innerText = "Place the ships.";
     };
 };
 

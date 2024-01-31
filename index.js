@@ -399,15 +399,15 @@ class Game {
         this.placeRandomShip(computerDestroyer, this.computerGameboard);
     };
 
-    placeManualyShip(initialCell, shipLength) {
-        const newShip = new Ship(shipLength);
+    placeManualyShip(initialCell, axis, shipLength) {
+        const newShip = new Ship(Number(shipLength));
         
-        if (!this.playerGameboard.isValidPlace(newShip, "row", initialCell)) {
+        if (!this.playerGameboard.isValidPlace(newShip, axis, initialCell)) {
             // return false to DOM so it knows that ship wasn't placed
             return false;
         };
 
-        this.playerGameboard.placeShip(newShip, "row", initialCell);
+        this.playerGameboard.placeShip(newShip, axis, initialCell);
         this.dom.displayFriendlyShips();
 
         return turn;
@@ -507,8 +507,10 @@ class Game {
     };
 
     restartTheGame() {
-        this.setUpNewGame();
-        this.dom.outro();
+        return setTimeout(() => {
+            this.setUpNewGame();
+            this.dom.outro();
+        }, 1000);
     };
 };
 
