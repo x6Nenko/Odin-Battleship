@@ -408,7 +408,7 @@ class Game {
         };
 
         this.playerGameboard.placeShip(newShip, axis, initialCell);
-        this.dom.displayFriendlyShips();
+        this.dom.displayFriendlyShips(newShip, axis, initialCell);
 
         return turn;
     };

@@ -5,14 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battleship</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="intro">
-        <div class="game-type">
-            <button id="vsPlayer" disabled>Play Against the Player</button>
-            <button id="vsComputer">Play Against the Computer</button>
+        <h1>BATTLESHIP</h1>
+
+        <div class="settings-container">
+            <div class="game-type">
+                <button id="vsPlayer" disabled>Play Against the Player</button>
+                <button id="vsComputer">Play Against the Computer</button>
+            </div>
+            <button id="startGame">Start Game</button>
         </div>
-        <button id="startGame">Start Game</button>
     </div>
 
     <div class="outro">
@@ -22,9 +29,12 @@
     
     <main id="main">
         <div class="friendly-container">
+            <h2 class="board-label">Friendly Waters</h2>
             <div class="friendly-board">
 
             </div>
+
+            <h2 id="turn"></h2>
 
             <div class="ships">
 
@@ -33,6 +43,7 @@
         </div>
 
         <div class="enemy-container">
+            <h2 class="board-label">Enemy Waters</h2>
             <div class="enemy-board">
                 
             </div>
@@ -40,7 +51,7 @@
 
         
     </main>
-    <h2 id="turn"></h2>
+    
     
     <script src="dom.js" type="module"></script>
     <script src="index.js" type="module"></script>

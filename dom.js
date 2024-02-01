@@ -20,18 +20,21 @@ class DOM {
         // Bind event listener methods here
         this.dragStart = this.dragStart.bind(this);
         this.dragEnd = this.dragEnd.bind(this);
+
         this.mouseDown = this.mouseDown.bind(this);
 
         this.dragOver = this.dragOver.bind(this);
         this.dragEnter = this.dragEnter.bind(this);
         this.dragLeave = this.dragLeave.bind(this);
         this.dropShip = this.dropShip.bind(this);
+
         this.highlightArea = this.highlightArea.bind(this);
         this.rotateShips = this.rotateShips.bind(this);
     };
 
     displayDragableShips() {
         const shipSizes = [5, 4, 3, 3, 2];
+        
         this.draggedShipAxis = "row";
         document.getElementById("rotateShips").style.display = "block";
 
@@ -49,11 +52,8 @@ class DOM {
                 shipContainer.appendChild(cell);
             };
           
-            const shipsContainer = document.querySelector(".ships");
-            shipsContainer.appendChild(shipContainer);
+            this.shipsContainer.appendChild(shipContainer);
         });
-
-        // 0) Render all ships
     };
 
     addDragAndDropEventListeners() {
@@ -80,25 +80,24 @@ class DOM {
     };
 
     dragStart(event) {
-        // 1) get here ship info
+        // get ship info
         this.draggedShip = event.target;
     };
 
     dragEnd(event) {
-        // 1.5) remove highlight and so on
+        // remove highlight and stop tracking ship
         this.draggedShip = null;
         this.removeHighlight();
     };
 
     mouseDown(event) {
-        // 1.75) get ship cell info
-        event.stopPropagation();
+        // get ship cell info
         const shipCellIndex = event.target.getAttribute('data-index');
         this.draggedShipCellIndex = shipCellIndex;
     };
 
     dragOver(event) {
-        // 2) call highlightArea by giving it a hovered by the cursor cell
+        // get hovered board cell and call highlightArea
         event.preventDefault();
         const hoveredBoardCell = event.target;
         this.highlightArea(hoveredBoardCell);
@@ -107,6 +106,7 @@ class DOM {
     dropShip(event) {
         event.preventDefault();
         const shipLength = this.draggedShip.getAttribute('data-length');
+
         if (game.placeManualyShip(this.initialCoordinatesForShipPlacement, this.draggedShipAxis, shipLength)) {
             // ship was succesfully placed
             this.draggedShip.remove();
@@ -156,7 +156,7 @@ class DOM {
             cell.classList.toggle("ship-cell-col");
         });
 
-        // switch axis
+        // switch axis info track
         this.draggedShipAxis === "row" ? this.draggedShipAxis = "col" : this.draggedShipAxis = "row";
     };
     
@@ -169,7 +169,7 @@ class DOM {
     };
 
     highlightArea(cell) {
-        // 3) get nearby cells and highlight them
+        // get nearby cells and highlight them
         let nearbyCells = this.getNearbyCells(cell);
 
         nearbyCells.forEach(cellId => {
@@ -179,7 +179,7 @@ class DOM {
     };
 
     getNearbyCells(cell) {
-        // 4) calculate nearby cells
+        // calculate nearby cells
         let hoveredCoordinates = cell.id.slice(2).replace('-', ', ');
         let row = hoveredCoordinates[0];
         let col = hoveredCoordinates[3];
@@ -203,7 +203,6 @@ class DOM {
             };
         };
 
-        // console.log(cellList);
         return cellList;
     };
 
@@ -260,26 +259,75 @@ class DOM {
 
     styleAttackedCoordinates(target, attackResult) {
         if (attackResult === null || attackResult === "null") {
-            return target.style.backgroundColor = "gray";
+            return target.classList.add("miss");
         } else if (attackResult === "hit") {
-            return target.style.backgroundColor = "red";
+            return target.classList.add("hit");
         }
     };
 
-    displayFriendlyShips() {
-        const friendlyBoard = game.playerGameboard.board;
-        
-        Object.entries(friendlyBoard).forEach(square => {
-            // make them looks as ids
-            const coordinates = `f-${square[0].replace(/,\s*/g, '-')}`;
+    displayFriendlyShips(ship, axis, initialCell) {
+        if (ship, axis, initialCell) {
+            // axis Y
+            const row = initialCell[0];
+            // axis X
+            const col = initialCell[1];
 
-            // null is a missed attack or drowned part of ship
-            const isShip = square[1] === null;
+            // place the ship on the board
+            for (let index = 0; index < ship.length; index++) {
+                if (axis === "row") {
+                    const key = `${row + index}, ${col}`;
+                    const coordinates = `f-${key.replace(/,\s*/g, '-')}`;
+                    const domSquare = document.getElementById(coordinates);
 
-            const domSquare = document.getElementById(coordinates);
-            domSquare.style.backgroundColor = "#00ff00";
-            domSquare.style.padding = "2px";
-        });
+                    // Create a pseudo-element to cover part of the cell
+                    domSquare.style.display = "flex";
+                    const pseudoElement = document.createElement('div');
+
+                    const cellSize = 40;
+                    const shipSizeWidth = 30;
+                    const shipSizeHeight = 35;
+                    const margin = (cellSize - shipSizeWidth) / 2;
+
+                    index === 0 ? pseudoElement.style.borderRadius = "100% 100% 0 0" : null;
+                    index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 0 100% 100%" : null;
+                    index === 0 ? pseudoElement.style.alignSelf = "end" : null;
+                    index === 0 || index === (ship.length - 1) ? pseudoElement.style.height = `${shipSizeHeight}px` : pseudoElement.style.height = `${cellSize}px`;
+
+                    pseudoElement.style.backgroundColor = "#365486";
+                    pseudoElement.style.width = `${shipSizeWidth}px`;
+                    pseudoElement.style.margin = `0 ${margin}px 0 ${margin}px`;
+                    pseudoElement.style.zIndex = '1';
+
+                    // Append the pseudo-element to the cell
+                    domSquare.appendChild(pseudoElement);
+                } else if (axis === "col") {
+                    const key = `${row}, ${col + index}`;
+                    const coordinates = `f-${key.replace(/,\s*/g, '-')}`;
+                    const domSquare = document.getElementById(coordinates);
+
+                    domSquare.style.display = "flex";
+                    const pseudoElement = document.createElement('div');
+
+                    const cellSize = 40;
+                    const shipSizeWidth = 35;
+                    const shipSizeHeight = 30;
+                    const margin = (cellSize - shipSizeHeight) / 2;
+                    
+
+                    // Adjustments for column axis
+                    index === 0 ? pseudoElement.style.borderRadius = "100% 0 0 100%" : null;
+                    index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 100% 100% 0" : null;
+                    index === 0 || index === (ship.length - 1) ? pseudoElement.style.width = `${shipSizeWidth}px` : pseudoElement.style.width = `${cellSize}px`;
+                    index === 0 ? pseudoElement.style.margin = `${margin}px 0 ${margin}px auto` : pseudoElement.style.margin = `${margin}px 0 ${margin}px 0`;
+
+                    pseudoElement.style.backgroundColor = "#365486";
+                    pseudoElement.style.height = `${shipSizeHeight}px`;
+                    pseudoElement.style.zIndex = '1';
+
+                    domSquare.appendChild(pseudoElement);
+                };
+            };
+        };
     };
 
     clearBoards() {
@@ -306,14 +354,8 @@ class DOM {
         const outroContainer = document.querySelector(".outro");
         const mainContainer = document.getElementById("main");
         const restartGameBtn = document.getElementById("restartGame");
-        const winnerContainer = document.getElementById("winner");
 
-        if (this.showWhosTurn.innerText === "Computer Turn.") {
-            winnerContainer.innerText = "🎉🎉🎉 You won! 🎉🎉🎉"
-        } else {
-            winnerContainer.innerText = "Computer has won!"
-        };
-
+        this.announceTheWinner();
         this.showWhosTurn.innerText = "";
         mainContainer.style.display = "none";
         outroContainer.style.display = "block"
@@ -323,6 +365,16 @@ class DOM {
             mainContainer.style.display = "flex";
             this.updateDOM();
         });
+    };
+
+    announceTheWinner() {
+        const winnerContainer = document.getElementById("winner");
+
+        if (this.showWhosTurn.innerText === "Computer Turn.") {
+            winnerContainer.innerText = "🎉🎉🎉 You won! 🎉🎉🎉"
+        } else {
+            winnerContainer.innerText = "Computer has won!"
+        };
     };
 
     updateDOM() {

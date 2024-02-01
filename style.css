@@ -4,15 +4,71 @@
     box-sizing: border-box;
 }
 
+body {
+    font-family: 'Kanit', sans-serif;
+    min-height: 100svh;
+    background-color: #f5f5f5;
+    /* background: #fc00ff;
+background: -webkit-linear-gradient(to right, #00dbde, #fc00ff);
+background: linear-gradient(to right, #00dbde, #fc00ff); */
+
+/* background: #43cea2;
+background: -webkit-linear-gradient(to right, #185a9d, #43cea2);
+background: linear-gradient(to right, #185a9d, #43cea2); */
+
+background: #83a4d4;
+background: -webkit-linear-gradient(to right, #b6fbff, #83a4d4);
+background: linear-gradient(to right, #b6fbff, #83a4d4);
+
+/* background: #70e1f5;
+background: -webkit-linear-gradient(to right, #ffd194, #70e1f5);
+background: linear-gradient(to right, #ffd194, #70e1f5); */
+
+
+
+
+}
+
+button {
+    font-family: 'Kanit', sans-serif;
+    font-weight: 200;
+}
+
 #main {
     display: none;
-    justify-content: space-evenly;
-    margin-top: 50px;
+    justify-content: space-around;
+    min-height: 90dvh;
+    padding-top: 100px;
+    max-width: 1280px;
+    margin: auto;
 }
 
 .intro {
+    padding-top: 100px;
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    place-content: center;
+    height: 50svh;
     width: fit-content;
-    margin: 200px auto 0;
+    margin: auto;
+}
+
+.intro h1 {
+    text-align: center;
+    color: #0F1035;
+    font-size: 6rem;
+    letter-spacing: 10px;
+    font-weight: 700;
+    text-shadow: 2px 2px 0px #3498db,
+    4px 4px 0px #de3d3d,
+    6px 6px 0px #34dbc5;
+}
+
+.board-label {
+    font-weight: 300;
 }
 
 .outro {
@@ -25,25 +81,89 @@
     margin-top: 20px;
     width: 100%;
     padding: 10px;
+    font-size: 2rem;
+
+    background-color: #0F1035;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+
+    transition: all;
+    transition-duration: 0.3s;
+}
+
+#startGame:hover, #restartGame:hover {
+    box-shadow:
+    0px 0px 1.4px #DCF2F1,
+    0px 0px 3.3px #DCF2F1,
+    0px 0px 6.3px #DCF2F1,
+    0px 0px 11.2px #DCF2F1,
+    0px 0px 20.9px #DCF2F1,
+    0px 0px 50px #DCF2F1
+    ;
 }
 
 .friendly-board, .enemy-board {
     display: grid;
     grid-template-columns: repeat(10, 40px);
+    gap: 2px;
+    /* border-bottom: 1px solid #0F1035;
+    border-left: 1px solid #0F1035; */
+    background-color: #DCF2F1;
+    background-color: #7FC7D9;
+    border: 2px solid #7FC7D9;
+
+    box-shadow:
+    0px 0px 2.2px rgba(0, 0, 0, 0.02),
+    0px 0px 5.3px rgba(0, 0, 0, 0.028),
+    0px 0px 10px rgba(0, 0, 0, 0.035),
+    0px 0px 17.9px rgba(0, 0, 0, 0.042),
+    0px 0px 33.4px rgba(0, 0, 0, 0.05),
+    0px 0px 80px rgba(0, 0, 0, 0.07)
+  ;
 }
 
 .friendly-board div, .enemy-board div {
+    position: relative;
     width: 40px;
     height: 40px;
-    border: 1px solid black;
+    /* border-top: 1px solid #0F1035;
+    border-right: 1px solid #0F1035; */
+    background-color: #ADD8E6;
+}
+
+.friendly-board div.hit::after, .enemy-board div.hit::after {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: #ff4136 ;
+    border-radius: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.friendly-board div.miss::after, .enemy-board div.miss::after {
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: #3f9ab1;
+    border-radius: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
 }
 
 #turn {
     text-align: center;
-    margin-top: 50px;
 }
 
 .ships {
+    user-select: none;
     margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
@@ -53,12 +173,23 @@
 
 .ship {
     cursor: grab;
+    height: fit-content;
 }
 
 .ship-cell {
     width: 30px;
     height: 40px;
-    background-color: green;
+    background-color: #365486;
+}
+
+.ship-cell:nth-of-type(1) {
+    height: 35px;
+    border-radius: 100% 100% 0 0;
+}
+
+.ship-cell:last-child {
+    height: 35px;
+    border-radius: 0 0 100% 100%;
 }
 
 .ship-col {
@@ -70,10 +201,18 @@
     height: 30px;
 }
 
-.carrier {
-    
+.ship-cell-col:nth-of-type(1) {
+    width: 35px;
+    height: 30px;
+    border-radius: 100% 0 0 100%;
+}
+
+.ship-cell-col:last-child {
+    width: 35px;
+    height: 30px;
+    border-radius: 0 100% 100% 0;
 }
 
 .highlighted {
-    background-color: lightblue;
+    background-color: #ffd3b6 !important;
 }
