@@ -410,7 +410,7 @@ class Game {
         this.playerGameboard.placeShip(newShip, axis, initialCell);
         this.dom.displayFriendlyShips(newShip, axis, initialCell);
 
-        return turn;
+        return true;
     };
 
     placeRandomShip(ship, whichGameboard) {

@@ -112,7 +112,7 @@ class DOM {
             this.draggedShip.remove();
         };
         
-        if (this.shipsContainer.childElementCount === 1) {
+        if (this.shipsContainer.childElementCount === 0) {
             // all ships were placed, time to start the fight
             // ``=== 1 because there is a button``
             // and unbing listeners
@@ -227,7 +227,7 @@ class DOM {
         const targetDiv = event.target;
         const coordinates = targetId.slice(2).replace('-', ', ');
 
-        if (this.shipsContainer.childElementCount !== 1) {
+        if (this.shipsContainer.childElementCount !== 0) {
             // there is still ship placement phase
             return null;
         };
@@ -347,12 +347,35 @@ class DOM {
             introContainer.style.display = "none";
             mainContainer.style.display = "flex";
             this.updateDOM();
+            this.shipPlacementStage();
+        });
+    };
+
+    shipPlacementStage() {
+        const shipsWrapper = document.querySelector(".ships-wrapper");
+        const enemyContainer = document.querySelector(".enemy-container");
+        const resetBtn = document.getElementById("reset");
+        const confirmBtn = document.getElementById("confirm");
+
+        confirmBtn.addEventListener("click", () => {
+            if (this.shipsContainer.childElementCount === 0) {
+                shipsWrapper.style.display = "none";
+                enemyContainer.style.display = "unset";
+            };
+        });
+
+        resetBtn.addEventListener("click", () => {
+            this.shipsContainer.innerHTML = "";
+            game.setUpNewGame();
+            this.updateDOM();
         });
     };
 
     outro() {
         const outroContainer = document.querySelector(".outro");
         const mainContainer = document.getElementById("main");
+        const shipsWrapper = document.querySelector(".ships-wrapper");
+        const enemyContainer = document.querySelector(".enemy-container");
         const restartGameBtn = document.getElementById("restartGame");
 
         this.announceTheWinner();
@@ -363,6 +386,8 @@ class DOM {
         restartGameBtn.addEventListener("click", () => {
             outroContainer.style.display = "none";
             mainContainer.style.display = "flex";
+            shipsWrapper.style.display = "flex";
+            enemyContainer.style.display = "none";
             this.updateDOM();
         });
     };

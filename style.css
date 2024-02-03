@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Kanit', sans-serif;
-    min-height: 100svh;
+    min-height: 100dvh;
     background-color: #f5f5f5;
     /* background: #fc00ff;
 background: -webkit-linear-gradient(to right, #00dbde, #fc00ff);
@@ -16,15 +16,15 @@ background: linear-gradient(to right, #00dbde, #fc00ff); */
 background: -webkit-linear-gradient(to right, #185a9d, #43cea2);
 background: linear-gradient(to right, #185a9d, #43cea2); */
 
-background: #83a4d4;
+/* background: #83a4d4;
 background: -webkit-linear-gradient(to right, #b6fbff, #83a4d4);
-background: linear-gradient(to right, #b6fbff, #83a4d4);
+background: linear-gradient(to right, #b6fbff, #83a4d4); */
 
-/* background: #70e1f5;
-background: -webkit-linear-gradient(to right, #ffd194, #70e1f5);
-background: linear-gradient(to right, #ffd194, #70e1f5); */
+background: #b6fbff;
+background: -webkit-linear-gradient(to right, #ffd194, #b6fbff);
+background: linear-gradient(to right, #ffd194, #b6fbff);
 
-
+/* background-color: #e6f6fc; */
 
 
 }
@@ -34,13 +34,57 @@ button {
     font-weight: 200;
 }
 
+#rotateShips, #reset, #confirm, #random {
+    font-weight: 400;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 10px;
+    margin: auto;
+    width: 100%;
+    border: 1px solid black;
+}
+
+#random, #reset {
+    padding: 5px;
+}
+
+.btn-wrapper {
+    margin-bottom: 20px;
+    width: 190px;
+}
+
+.btn-wrapper div {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-wrapper:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
+.fa-rotate {
+    margin-right: 5px;
+}
+
 #main {
+    user-select: none;
     display: none;
     justify-content: space-around;
-    min-height: 90dvh;
-    padding-top: 100px;
+    padding-top: 50px;
     max-width: 1280px;
     margin: auto;
+}
+
+.reset-confirm-container {
+    display: flex;
+    place-content: center;
+    max-width: 1280px;
+    margin: auto;
+    margin-top: 30px;
 }
 
 .intro {
@@ -103,6 +147,21 @@ button {
     ;
 }
 
+.test {
+    height: 500px;
+    background-color: #3f9ab1;
+}
+
+.enemy-container {
+    display: none;
+}
+
+#turn {
+    text-align: center;
+}
+
+/* ships and boards */
+
 .friendly-board, .enemy-board {
     display: grid;
     grid-template-columns: repeat(10, 40px);
@@ -158,17 +217,18 @@ button {
     z-index: 2;
 }
 
-#turn {
-    text-align: center;
+.ships-wrapper {
+    width: 422px;
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
 }
 
 .ships {
-    user-select: none;
-    margin-top: 20px;
+    width: 190px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    max-width: 300px;
 }
 
 .ship {
