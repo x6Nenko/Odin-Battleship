@@ -356,18 +356,30 @@ class DOM {
         const enemyContainer = document.querySelector(".enemy-container");
         const resetBtn = document.getElementById("reset");
         const confirmBtn = document.getElementById("confirm");
+        const randomBtn = document.getElementById("random");
 
         confirmBtn.addEventListener("click", () => {
             if (this.shipsContainer.childElementCount === 0) {
                 shipsWrapper.style.display = "none";
                 enemyContainer.style.display = "unset";
             };
+
+            console.log(game.playerGameboard);
+            console.log(game.player.gameboard);
         });
 
         resetBtn.addEventListener("click", () => {
             this.shipsContainer.innerHTML = "";
-            game.setUpNewGame();
+            game.playerGameboard.resetBoardAndShips();
+            this.displayDragableShips();
             this.updateDOM();
+        });
+
+        randomBtn.addEventListener("click", () => {
+            this.shipsContainer.innerHTML = "";
+            game.playerGameboard.resetBoardAndShips();
+            this.updateDOM();
+            game.placeRandomShips(game.playerGameboard);
         });
     };
 
@@ -405,7 +417,7 @@ class DOM {
     updateDOM() {
         this.clearBoards();
         this.displayBoards();
-        this.displayFriendlyShips();
+        // this.displayFriendlyShips(); is it even needed?
         this.addDragAndDropEventListeners();
         this.showWhosTurn.innerText = "Place the ships.";
     };

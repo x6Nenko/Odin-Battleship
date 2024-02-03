@@ -122,6 +122,11 @@ class Gameboard {
             return true;
         };
     };
+
+    resetBoardAndShips() {
+        this.board = {};
+        this.ships = [];
+    };
 };
 
 class Player {
@@ -359,7 +364,7 @@ class Game {
     setUpNewGame() {
         this.createBoards();
         this.createPlayers();
-        this.placeRandomShips();
+        this.placeRandomShips(this.computerGameboard);
         this.dom.displayDragableShips();
     };
 
@@ -373,30 +378,18 @@ class Game {
         this.computer = new Player("computer", this.computerGameboard, false);
     }
 
-    placeRandomShips() {
-        // const playerCarrier = new Ship(5);
-        // const playerBattleship = new Ship(4);
-        // const playerCruiser = new Ship(3);
-        // const playerSubmarine = new Ship(3);
-        // const playerDestroyer = new Ship(2);
-    
-        const computerCarrier = new Ship(5);
-        const computerBattleship = new Ship(4);
-        const computerCruiser = new Ship(3);
-        const computerSubmarine = new Ship(3);
-        const computerDestroyer = new Ship(2);
+    placeRandomShips(atBoard) {    
+        const Carrier = new Ship(5);
+        const Battleship = new Ship(4);
+        const Cruiser = new Ship(3);
+        const Submarine = new Ship(3);
+        const Destroyer = new Ship(2);
 
-        // this.placeRandomShip(playerCarrier, this.playerGameboard);
-        // this.placeRandomShip(playerBattleship, this.playerGameboard);
-        // this.placeRandomShip(playerSubmarine, this.playerGameboard);
-        // this.placeRandomShip(playerDestroyer, this.playerGameboard);
-        // this.placeRandomShip(playerCruiser, this.playerGameboard);
-
-        this.placeRandomShip(computerCarrier, this.computerGameboard);
-        this.placeRandomShip(computerBattleship, this.computerGameboard);
-        this.placeRandomShip(computerCruiser, this.computerGameboard);
-        this.placeRandomShip(computerSubmarine, this.computerGameboard);
-        this.placeRandomShip(computerDestroyer, this.computerGameboard);
+        this.placeRandomShip(Carrier, atBoard);
+        this.placeRandomShip(Battleship, atBoard);
+        this.placeRandomShip(Cruiser, atBoard);
+        this.placeRandomShip(Submarine, atBoard);
+        this.placeRandomShip(Destroyer, atBoard);
     };
 
     placeManualyShip(initialCell, axis, shipLength) {
@@ -421,6 +414,10 @@ class Game {
         } while (!whichGameboard.isValidPlace(ship, randomPlace[0], randomPlace[1]));
 
         whichGameboard.placeShip(ship, randomPlace[0], randomPlace[1]);
+        
+        if (whichGameboard === this.playerGameboard) {
+            this.dom.displayFriendlyShips(ship, randomPlace[0], randomPlace[1]);
+        };
     };
 
     // shouldnt i move 2 functions below to player class?
@@ -459,7 +456,7 @@ class Game {
             // now its computer turn, so we can run it right away
             setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 1000);
+            }, 100);
         } else {
             // computer used its turn
             this.computer.changeTurn(this.computer, this.player)
@@ -510,7 +507,7 @@ class Game {
         return setTimeout(() => {
             this.setUpNewGame();
             this.dom.outro();
-        }, 1000);
+        }, 100);
     };
 };
 
