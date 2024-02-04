@@ -8,31 +8,157 @@ body {
     font-family: 'Kanit', sans-serif;
     min-height: 100dvh;
     background-color: #f5f5f5;
-    /* background: #fc00ff;
-background: -webkit-linear-gradient(to right, #00dbde, #fc00ff);
-background: linear-gradient(to right, #00dbde, #fc00ff); */
 
-/* background: #43cea2;
-background: -webkit-linear-gradient(to right, #185a9d, #43cea2);
-background: linear-gradient(to right, #185a9d, #43cea2); */
-
-/* background: #83a4d4;
-background: -webkit-linear-gradient(to right, #b6fbff, #83a4d4);
-background: linear-gradient(to right, #b6fbff, #83a4d4); */
-
-background: #b6fbff;
-background: -webkit-linear-gradient(to right, #ffd194, #b6fbff);
-background: linear-gradient(to right, #ffd194, #b6fbff);
-
-/* background-color: #e6f6fc; */
-
-
+    background: #b6fbff;
+    background: -webkit-linear-gradient(to right, #ffd194, #b6fbff);
+    background: linear-gradient(to right, #ffd194, #b6fbff);
 }
 
 button {
     font-family: 'Kanit', sans-serif;
     font-weight: 200;
 }
+
+#main {
+    user-select: none;
+    display: none;
+    justify-content: space-between;
+    padding-top: 50px;
+    max-width: 1024px;
+    margin: auto;
+}
+
+.enemy-container {
+    display: none;
+}
+
+/* ================ intro outro ================ */
+
+.intro {
+    padding-top: 100px;
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    place-content: center;
+    height: 50svh;
+    width: fit-content;
+    margin: auto;
+}
+
+.intro h1 {
+    text-align: center;
+    color: #0F1035;
+    font-size: 6rem;
+    letter-spacing: 10px;
+    font-weight: 700;
+    text-shadow: 2px 2px 0px #3498db,
+    4px 4px 0px #de3d3d,
+    6px 6px 0px #34dbc5;
+}
+
+.outro {
+    display: none;
+    width: fit-content;
+    margin: 200px auto 0;
+}
+
+#startGame, #restartGame {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 2rem;
+
+    background-color: #0F1035;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+
+    transition: all;
+    transition-duration: 0.3s;
+}
+
+#startGame:hover, #restartGame:hover {
+    box-shadow:
+    0px 0px 1.4px #DCF2F1,
+    0px 0px 3.3px #DCF2F1,
+    0px 0px 6.3px #DCF2F1,
+    0px 0px 11.2px #DCF2F1,
+    0px 0px 20.9px #DCF2F1,
+    0px 0px 50px #DCF2F1
+    ;
+}
+
+/* ================ board labels ================ */
+
+.board-label {
+    font-weight: 300;
+}
+
+.board-label-wrapper {
+    display: flex;
+    gap: 5px;
+    width: fit-content;
+    margin-bottom: 3px;
+}
+
+.board-label-wrapper-friendly {
+    background-color: #adf39f;
+    padding-right: 5px;
+}
+
+.board-label-wrapper-enemy {
+    background-color: #f39f9f;
+    padding-left: 5px;
+    margin-left: auto;
+}
+
+.corner-line {
+    width: 7px;
+}
+
+.corner-line-left {
+    background-color: #49b633;
+}
+
+.corner-line-right {
+    background-color: #b63333;
+}
+
+/* ================ info board ================ */
+
+.info-corner-line {
+    width: 10px;
+}
+
+.info-board {
+    display: none;
+    place-content: center;
+    justify-content: space-between;
+    max-width: 1024px;
+    margin: auto;
+    margin-top: 30px;
+
+    background-image: linear-gradient(to right, #adf39f, #f39f9f);
+    background-size: 200% 100%;
+    background-position: center;
+    transition: background-position 0.5s ease-in;
+}
+
+.info-board-player-turn {
+    background-position: left;
+}
+
+.info-board-computer-turn {
+    background-position: right;
+}
+
+#turn {
+    text-align: center;
+}
+
+/* ================ ships placement stage ================ */
 
 #rotateShips, #reset, #confirm, #random {
     font-weight: 400;
@@ -70,140 +196,7 @@ button {
     margin-right: 5px;
 }
 
-#main {
-    user-select: none;
-    display: none;
-    justify-content: space-between;
-    padding-top: 50px;
-    max-width: 1024px;
-    margin: auto;
-}
-
-.info-board {
-    display: none;
-    place-content: center;
-    justify-content: space-between;
-    max-width: 1024px;
-    margin: auto;
-    margin-top: 30px;
-
-    background-image: linear-gradient(to right, #adf39f, #f39f9f);
-    background-size: 200% 100%;
-    background-position: center;
-    transition: background-position 0.5s ease-in;
-}
-
-.info-board-player-turn {
-    background-position: left;
-}
-
-.info-board-computer-turn {
-    background-position: right;
-}
-
-.intro {
-    padding-top: 100px;
-}
-
-.settings-container {
-    display: flex;
-    flex-direction: column;
-    place-content: center;
-    height: 50svh;
-    width: fit-content;
-    margin: auto;
-}
-
-.intro h1 {
-    text-align: center;
-    color: #0F1035;
-    font-size: 6rem;
-    letter-spacing: 10px;
-    font-weight: 700;
-    text-shadow: 2px 2px 0px #3498db,
-    4px 4px 0px #de3d3d,
-    6px 6px 0px #34dbc5;
-}
-
-.board-label {
-    font-weight: 300;
-}
-
-.board-label-wrapper {
-    display: flex;
-    gap: 5px;
-    width: fit-content;
-    margin-bottom: 3px;
-}
-
-.board-label-wrapper-friendly {
-    background-color: #adf39f;
-    padding-right: 5px;
-}
-
-.board-label-wrapper-enemy {
-    background-color: #f39f9f;
-    padding-left: 5px;
-    margin-left: auto;
-}
-
-.corner-line {
-    width: 7px;
-}
-
-.corner-line-left {
-    background-color: #49b633;
-}
-
-.corner-line-right {
-    background-color: #b63333;
-}
-
-.info-corner-line {
-    width: 10px;
-}
-
-.outro {
-    display: none;
-    width: fit-content;
-    margin: 200px auto 0;
-}
-
-#startGame, #restartGame {
-    margin-top: 20px;
-    width: 100%;
-    padding: 10px;
-    font-size: 2rem;
-
-    background-color: #0F1035;
-    border: none;
-    border-radius: 10px;
-    color: #ffffff;
-
-    transition: all;
-    transition-duration: 0.3s;
-}
-
-#startGame:hover, #restartGame:hover {
-    box-shadow:
-    0px 0px 1.4px #DCF2F1,
-    0px 0px 3.3px #DCF2F1,
-    0px 0px 6.3px #DCF2F1,
-    0px 0px 11.2px #DCF2F1,
-    0px 0px 20.9px #DCF2F1,
-    0px 0px 50px #DCF2F1
-    ;
-}
-
-.enemy-container {
-    display: none;
-}
-
-#turn {
-    text-align: center;
-}
-
-/* ships and boards */
+/* ================ ships and boards ================ */
 
 .friendly-board, .enemy-board {
     display: grid;
