@@ -312,3 +312,47 @@ button {
 .highlighted {
     background-color: #ffd3b6 !important;
 }
+
+/* ================ media queries ================ */
+
+@media screen and (max-width: 870px) {
+    #main {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .intro h1 {
+        font-size: 3.5rem;
+    }
+
+    .friendly-container {
+        width: fit-content;
+    }
+
+    .enemy-container {
+        margin-top: 35px;
+    }
+
+    .ships-wrapper {
+        align-items: center;
+    }
+
+    .ships {
+        margin-bottom: 40px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .intro h1 {
+        font-size: 2rem;
+    }
+
+    .friendly-board div, .enemy-board div {
+        width: 30px;
+        height: 30px;
+    }
+
+    .friendly-board, .enemy-board {
+        grid-template-columns: repeat(10, 30px);
+    }
+}
