@@ -117,7 +117,7 @@ class DOM {
             // ``=== 1 because there is a button``
             // and unbing listeners
             this.removeDragAndDropListeners();
-            this.showWhosTurn.innerText = "Player Turn.";
+            this.showWhosTurn.innerText = "Ready to go! Confirm it.";
             document.getElementById("rotateShips").style.display = "none";
         };
     };
@@ -241,19 +241,28 @@ class DOM {
     };
 
     getLastAttackInfo(board, attackInfo) {
-        this.displayInfoAboutCurrentTurn(board);
         const targetId = `${board}-${attackInfo.coordinates.slice(0).replace(', ', '-')}`;
         const targetDiv = document.getElementById(targetId);
         const attackResult = attackInfo["result"];
+
+        if (attackResult !== "hit") {
+            this.displayInfoAboutCurrentTurn(board);
+        };
 
         this.styleAttackedCoordinates(targetDiv, attackResult);
     };
 
     displayInfoAboutCurrentTurn(whoIsNext) {
+        const infoBoard = document.querySelector(".info-board");
+
         if (whoIsNext === "e") {
             this.showWhosTurn.innerText = "Computer Turn."
+            infoBoard.classList.remove("info-board-player-turn");
+            infoBoard.classList.add("info-board-computer-turn");
         } else if (whoIsNext === "f") {
             this.showWhosTurn.innerText = "Player Turn."
+            infoBoard.classList.remove("info-board-computer-turn");
+            infoBoard.classList.add("info-board-player-turn");
         };
     };
 
@@ -339,6 +348,7 @@ class DOM {
     intro() {
         const introContainer = document.querySelector(".intro");
         const mainContainer = document.getElementById("main");
+        const infoBoardContainer = document.querySelector(".info-board");
         const playerVsPlayerBtn = document.getElementById("vsPlayer");
         const playerVsComputerBtn = document.getElementById("vsComputer");
         const startGameBtn = document.getElementById("startGame");
@@ -346,6 +356,7 @@ class DOM {
         startGameBtn.addEventListener("click", () => {
             introContainer.style.display = "none";
             mainContainer.style.display = "flex";
+            infoBoardContainer.style.display = "flex";
             this.updateDOM();
             this.shipPlacementStage();
         });
@@ -354,6 +365,7 @@ class DOM {
     shipPlacementStage() {
         const shipsWrapper = document.querySelector(".ships-wrapper");
         const enemyContainer = document.querySelector(".enemy-container");
+        const infoBoard = document.querySelector(".info-board");
         const resetBtn = document.getElementById("reset");
         const confirmBtn = document.getElementById("confirm");
         const randomBtn = document.getElementById("random");
@@ -362,10 +374,8 @@ class DOM {
             if (this.shipsContainer.childElementCount === 0) {
                 shipsWrapper.style.display = "none";
                 enemyContainer.style.display = "unset";
+                this.displayInfoAboutCurrentTurn("f");
             };
-
-            console.log(game.playerGameboard);
-            console.log(game.player.gameboard);
         });
 
         resetBtn.addEventListener("click", () => {
@@ -380,34 +390,40 @@ class DOM {
             game.playerGameboard.resetBoardAndShips();
             this.updateDOM();
             game.placeRandomShips(game.playerGameboard);
+            this.showWhosTurn.innerText = "Ready to go! Confirm it.";
         });
     };
 
-    outro() {
+    outro(isPlayerAttackLast) {
         const outroContainer = document.querySelector(".outro");
         const mainContainer = document.getElementById("main");
         const shipsWrapper = document.querySelector(".ships-wrapper");
+        const infoBoardContainer = document.querySelector(".info-board");
         const enemyContainer = document.querySelector(".enemy-container");
         const restartGameBtn = document.getElementById("restartGame");
 
-        this.announceTheWinner();
+        isPlayerAttackLast === true ? this.announceTheWinner("player") : this.announceTheWinner("computer");
         this.showWhosTurn.innerText = "";
         mainContainer.style.display = "none";
+        infoBoardContainer.style.display = "none";
+        infoBoardContainer.classList.remove("info-board-player-turn");
+        infoBoardContainer.classList.remove("info-board-computer-turn");
         outroContainer.style.display = "block"
 
         restartGameBtn.addEventListener("click", () => {
             outroContainer.style.display = "none";
             mainContainer.style.display = "flex";
             shipsWrapper.style.display = "flex";
+            infoBoardContainer.style.display = "flex";
             enemyContainer.style.display = "none";
             this.updateDOM();
         });
     };
 
-    announceTheWinner() {
+    announceTheWinner(winner) {
         const winnerContainer = document.getElementById("winner");
 
-        if (this.showWhosTurn.innerText === "Computer Turn.") {
+        if (winner === "player") {
             winnerContainer.innerText = "🎉🎉🎉 You won! 🎉🎉🎉"
         } else {
             winnerContainer.innerText = "Computer has won!"

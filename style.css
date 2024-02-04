@@ -73,18 +73,32 @@ button {
 #main {
     user-select: none;
     display: none;
-    justify-content: space-around;
+    justify-content: space-between;
     padding-top: 50px;
-    max-width: 1280px;
+    max-width: 1024px;
     margin: auto;
 }
 
-.reset-confirm-container {
-    display: flex;
+.info-board {
+    display: none;
     place-content: center;
-    max-width: 1280px;
+    justify-content: space-between;
+    max-width: 1024px;
     margin: auto;
     margin-top: 30px;
+
+    background-image: linear-gradient(to right, #adf39f, #f39f9f);
+    background-size: 200% 100%;
+    background-position: center;
+    transition: background-position 0.5s ease-in;
+}
+
+.info-board-player-turn {
+    background-position: left;
+}
+
+.info-board-computer-turn {
+    background-position: right;
 }
 
 .intro {
@@ -113,6 +127,40 @@ button {
 
 .board-label {
     font-weight: 300;
+}
+
+.board-label-wrapper {
+    display: flex;
+    gap: 5px;
+    width: fit-content;
+    margin-bottom: 3px;
+}
+
+.board-label-wrapper-friendly {
+    background-color: #adf39f;
+    padding-right: 5px;
+}
+
+.board-label-wrapper-enemy {
+    background-color: #f39f9f;
+    padding-left: 5px;
+    margin-left: auto;
+}
+
+.corner-line {
+    width: 7px;
+}
+
+.corner-line-left {
+    background-color: #49b633;
+}
+
+.corner-line-right {
+    background-color: #b63333;
+}
+
+.info-corner-line {
+    width: 10px;
 }
 
 .outro {
@@ -145,11 +193,6 @@ button {
     0px 0px 20.9px #DCF2F1,
     0px 0px 50px #DCF2F1
     ;
-}
-
-.test {
-    height: 500px;
-    background-color: #3f9ab1;
 }
 
 .enemy-container {

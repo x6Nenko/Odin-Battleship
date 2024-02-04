@@ -30,7 +30,10 @@
     
     <main id="main">
         <div class="friendly-container">
-            <h2 class="board-label">Friendly Waters</h2>
+            <div class="board-label-wrapper board-label-wrapper-friendly">
+                <div class="corner-line corner-line-left"></div>
+                <h2 class="board-label">Friendly Waters</h2>
+            </div>
             <div class="friendly-board">
 
             </div>
@@ -55,15 +58,20 @@
         </div>
 
         <div class="enemy-container">
-            <h2 class="board-label">Enemy Waters</h2>
+            <div class="board-label-wrapper board-label-wrapper-enemy">
+                <h2 class="board-label">Enemy Waters</h2>
+                <div class="corner-line corner-line-right"></div>
+            </div>
             <div class="enemy-board">
                 
             </div>
         </div> 
     </main>
 
-    <div class="reset-confirm-container">
+    <div class="info-board">
+        <div class="corner-line corner-line-left info-corner-line"></div>
         <h2 id="turn"></h2>
+        <div class="corner-line corner-line-right info-corner-line"></div>
     </div>
        
     <script src="dom.js" type="module"></script>

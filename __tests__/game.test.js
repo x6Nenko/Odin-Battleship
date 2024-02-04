@@ -20,7 +20,7 @@ test('place the ships for computer', () => {
   const game = new Game();
   game.createBoards();
   game.createPlayers();
-  game.placeRandomShips();
+  game.placeRandomShips(game.computerGameboard);
 
   const expectShip = expect.objectContaining({
       hits: expect.any(Number),

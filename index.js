@@ -456,7 +456,7 @@ class Game {
             // now its computer turn, so we can run it right away
             setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 100);
+            }, 1000);
         } else {
             // computer used its turn
             this.computer.changeTurn(this.computer, this.player)
@@ -505,9 +505,11 @@ class Game {
 
     restartTheGame() {
         return setTimeout(() => {
+            // send isTurn to outro so it knows who won the match
+            this.dom.outro(this.player.isTurn);
+
             this.setUpNewGame();
-            this.dom.outro();
-        }, 100);
+        }, 1000);
     };
 };
 
