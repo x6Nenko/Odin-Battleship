@@ -34,18 +34,22 @@ class Gameboard {
         // axis X
         const col = initialCell[1];
 
+        const finalShipCoordinates = [];
+
         // place the ship on the board
         for (let index = 0; index < ship.length; index++) {
             if (axis === "row") {
                 const key = `${row + index}, ${col}`;
                 this.board[key] = ship;
+                finalShipCoordinates.push(key);
             } else if (axis === "col") {
                 const key = `${row}, ${col + index}`;
                 this.board[key] = ship;
+                finalShipCoordinates.push(key);
             };
         };
 
-        this.ships.push(ship); // add the ship to the list of ships
+        this.ships.push([ship, finalShipCoordinates, axis]); // add the ship to the list of ships
     };
 
     isValidPlace(ship, axis, initialCell) {
@@ -109,9 +113,10 @@ class Gameboard {
 
     isAllShipsSunk() {
         const ships = this.ships;
+        
 
         for (let i = 0; i < ships.length; i++) {
-            const ship = ships[i];
+            const ship = ships[i][0];
 
             if (ship.sunk === false) {
                 // Return false if any ship is not sunk
@@ -364,7 +369,7 @@ class Game {
     setUpNewGame() {
         this.createBoards();
         this.createPlayers();
-        this.placeRandomShips(this.computerGameboard);
+        // this.placeRandomShips(this.computerGameboard);
         this.dom.displayDragableShips();
     };
 
@@ -420,8 +425,6 @@ class Game {
         };
     };
 
-    // shouldnt i move 2 functions below to player class?
-    // i guess nop
     whoseTurn() {
         if (this.player.isTurn) {
             return "player";
@@ -433,10 +436,10 @@ class Game {
     isAllShipsSunk(enemy) {
         if (enemy === "player") {
             const playerShips = this.player.gameboard.ships;
-            return playerShips.every(ship => ship.sunk);
+            return playerShips.every(ship => ship[0].sunk);
         } else if (enemy === "computer") {
             const computerShips = this.computer.gameboard.ships;
-            return computerShips.every(ship => ship.sunk);
+            return computerShips.every(ship => ship[0].sunk);
         };
     };
 
@@ -456,7 +459,7 @@ class Game {
             // now its computer turn, so we can run it right away
             setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 1000);
+            }, 100);
         } else {
             // computer used its turn
             this.computer.changeTurn(this.computer, this.player)
@@ -475,6 +478,12 @@ class Game {
 
         // change styling of the square depending on result
         const latestAttackInfo = this.computer.gameboard.lastReceivedAttackInfo;
+
+        const computersSunkShips = this.getComputersSunkShips();
+        if (computersSunkShips) {
+            this.dom.displaySunkedShip(computersSunkShips);
+        };
+
         // e = enemy (computer board)
         this.dom.getLastAttackInfo("e", latestAttackInfo);
 
@@ -497,10 +506,24 @@ class Game {
             // when attack is succesfull and there are still ships left - keep turn for a computer
             return setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 1000);
+            }, 100);
         };
 
         this.checkAndProceed("player");
+    };
+
+    getComputersSunkShips() {
+        const ships = this.computerGameboard.ships;
+        const sunkShips = [];
+
+        ships.forEach(ship => {
+            if (ship[0].sunk) {
+                // push ship coordinates and axis
+                sunkShips.push([ship]);
+            };
+        });
+
+        return sunkShips;
     };
 
     restartTheGame() {

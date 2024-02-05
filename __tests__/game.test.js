@@ -1,5 +1,24 @@
 import { Ship, Gameboard, Player, Game } from "../index.js";
 
+// Mock DOM class
+class MockDOM {
+    displayDragableShips() {
+        // Do nothing
+    };
+
+    displayEnemyShips() {
+        // Do nothing
+    };
+
+    displaySunkedShip() {
+        // Do nothing
+    };
+
+    getLastAttackInfo() {
+        // Do nothing
+    };
+};
+
 test('create new boards', () => {
     const game = new Game();
     game.createBoards();
@@ -18,6 +37,7 @@ test('create new players', () => {
 
 test('place the ships for computer', () => {
   const game = new Game();
+  game.dom = new MockDOM();
   game.createBoards();
   game.createPlayers();
   game.placeRandomShips(game.computerGameboard);
@@ -42,14 +62,6 @@ test('place the ships for computer', () => {
   expectGameboard(game.computer.gameboard);
 });
 
-// Mock DOM class
-class MockDOM {
-    displayDragableShips() {
-        // Do nothing
-    };
-};
-
-
 test('set up the game by one helper function', () => {
     const game = new Game();
     game.dom = new MockDOM();
@@ -62,8 +74,8 @@ test('set up the game by one helper function', () => {
 
     // Test gameboard structure and ships
     const expectComputerGameboard = (gameboard) => {
-        expect(Object.keys(gameboard.board).length).toBeGreaterThan(0);
-        expect(gameboard.ships).toHaveLength(5);
+        expect(Object.keys(gameboard.board).length).toEqual(0);
+        expect(gameboard.ships).toBeDefined();
         expect(gameboard.lastReceivedAttackInfo).toBeNull();
         
         // Test each ship in the board
@@ -97,17 +109,15 @@ test('whose turn function shows that now is the computer turn', () => {
     const game = new Game();
     game.dom = new MockDOM();
     game.setUpNewGame();
+    game.placeRandomShips(game.computerGameboard);
     game.checkAndProceed("computer");
 
     expect(game.whoseTurn()).toEqual("computer");
 });
 
 test('after succesfull attack player keeps its turn', () => {
-    const mockDom = {
-        getLastAttackInfo: jest.fn(),
-    };
-
-    const game = new Game(mockDom); // Pass the mockDom to the Game constructor
+    const game = new Game();
+    game.dom = new MockDOM();
 
     game.createBoards();
     game.createPlayers();

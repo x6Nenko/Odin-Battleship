@@ -53,25 +53,26 @@ button {
     font-size: 6rem;
     letter-spacing: 10px;
     font-weight: 700;
-    text-shadow: 2px 2px 0px #3498db,
-    4px 4px 0px #de3d3d,
-    6px 6px 0px #34dbc5;
+    text-shadow: 2px 2px 0px #7FC7D9,
+    4px 4px 0px #b63333,
+    6px 6px 0px #49b633;
 }
 
 .outro {
+    padding-top: 200px;
     display: none;
     width: fit-content;
-    margin: 200px auto 0;
+    margin: auto;
 }
 
 #startGame, #restartGame {
     margin-top: 20px;
     width: 100%;
-    padding: 10px;
+    padding: 10px 45px;
     font-size: 2rem;
 
     background-color: #0F1035;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 10px;
     color: #ffffff;
 
@@ -80,14 +81,21 @@ button {
 }
 
 #startGame:hover, #restartGame:hover {
+    border: 1px solid #0F1035;
+    background-color: #fff;
+    color: #0F1035;
     box-shadow:
-    0px 0px 1.4px #DCF2F1,
-    0px 0px 3.3px #DCF2F1,
-    0px 0px 6.3px #DCF2F1,
-    0px 0px 11.2px #DCF2F1,
-    0px 0px 20.9px #DCF2F1,
-    0px 0px 50px #DCF2F1
-    ;
+    0px 2.8px 2.2px rgba(0, 0, 0, 0.02),
+    0px 6.7px 5.3px rgba(0, 0, 0, 0.028),
+    0px 12.5px 10px rgba(0, 0, 0, 0.035),
+    0px 22.3px 17.9px rgba(0, 0, 0, 0.042),
+    0px 41.8px 33.4px rgba(0, 0, 0, 0.05),
+    0px 100px 80px rgba(0, 0, 0, 0.07)
+  ;
+}
+
+#winner {
+    font-size: 2rem;
 }
 
 /* ================ board labels ================ */
@@ -139,7 +147,8 @@ button {
     max-width: 1024px;
     margin: auto;
     margin-top: 30px;
-
+    height: 50px;
+    
     background-image: linear-gradient(to right, #adf39f, #f39f9f);
     background-size: 200% 100%;
     background-position: center;
@@ -156,6 +165,8 @@ button {
 
 #turn {
     text-align: center;
+    font-weight: 500;
+    align-self: center;
 }
 
 /* ================ ships placement stage ================ */
@@ -167,7 +178,13 @@ button {
     border-radius: 10px;
     margin: auto;
     width: 100%;
-    border: 1px solid black;
+    border: 1px solid #0F1035;
+    background-color: #fff;
+    transition: background-color .2s ease-in-out;
+}
+
+#rotateShips:hover, #reset:hover, #confirm:hover, #random:hover {
+    background-color: #f5f5f5;
 }
 
 #random, #reset {
@@ -230,8 +247,8 @@ button {
 .friendly-board div.hit::after, .enemy-board div.hit::after {
     content: "";
     position: absolute;
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
     background-color: #ff4136 ;
     border-radius: 100%;
     top: 50%;
@@ -243,8 +260,8 @@ button {
 .friendly-board div.miss::after, .enemy-board div.miss::after {
     content: "";
     position: absolute;
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
     background-color: #3f9ab1;
     border-radius: 100%;
     top: 50%;

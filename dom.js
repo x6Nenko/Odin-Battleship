@@ -33,6 +33,9 @@ class DOM {
     };
 
     displayDragableShips() {
+        // clear existing container created in previous game
+        this.shipsContainer.innerHTML = "";
+
         const shipSizes = [5, 4, 3, 3, 2];
         
         this.draggedShipAxis = "row";
@@ -252,6 +255,24 @@ class DOM {
         this.styleAttackedCoordinates(targetDiv, attackResult);
     };
 
+    displaySunkedShip(ships) {
+        if (ships.length > 0) {
+            ships.forEach(ship => {
+                const shipObj = ship[0][0];
+                const axis = ship[0][2];
+                const initialCell = ship[0][1][0];
+                const convertedInitialCell = initialCell.split(',').map(Number);
+
+                const boardCellId = `e-${initialCell.replace(/,\s*/g, '-')}`;
+                const boardCellElement = document.getElementById(boardCellId);
+                if (!boardCellElement.hasChildNodes()) {
+                    // call it only if this ship wasn't displayed yet
+                    this.displayEnemyShips(shipObj, axis, convertedInitialCell);
+                };
+            });
+        };
+    };
+
     displayInfoAboutCurrentTurn(whoIsNext) {
         const infoBoard = document.querySelector(".info-board");
 
@@ -276,65 +297,75 @@ class DOM {
 
     displayFriendlyShips(ship, axis, initialCell) {
         if (ship, axis, initialCell) {
-            // axis Y
-            const row = initialCell[0];
-            // axis X
-            const col = initialCell[1];
+            this.displayOnboardShips(ship, axis, initialCell, "f");
+        };
+    };
 
-            // place the ship on the board
-            for (let index = 0; index < ship.length; index++) {
-                if (axis === "row") {
-                    const key = `${row + index}, ${col}`;
-                    const coordinates = `f-${key.replace(/,\s*/g, '-')}`;
-                    const domSquare = document.getElementById(coordinates);
+    displayEnemyShips(ship, axis, initialCell) {
+        if (ship, axis, initialCell) {
+            this.displayOnboardShips(ship, axis, initialCell, "e");
+        };
+    };
 
-                    // Create a pseudo-element to cover part of the cell
-                    domSquare.style.display = "flex";
-                    const pseudoElement = document.createElement('div');
+    displayOnboardShips(ship, axis, initialCell, atBoard) {
+        // axis Y
+        const row = initialCell[0];
+        // axis X
+        const col = initialCell[1];
 
-                    const cellSize = 40;
-                    const shipSizeWidth = 30;
-                    const shipSizeHeight = 35;
-                    const margin = (cellSize - shipSizeWidth) / 2;
+        // place the ship on the board
+        for (let index = 0; index < ship.length; index++) {
+            if (axis === "row") {
+                const key = `${row + index}, ${col}`;
+                const coordinates = `${atBoard}-${key.replace(/,\s*/g, '-')}`;
+                const domSquare = document.getElementById(coordinates);
 
-                    index === 0 ? pseudoElement.style.borderRadius = "100% 100% 0 0" : null;
-                    index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 0 100% 100%" : null;
-                    index === 0 ? pseudoElement.style.alignSelf = "end" : null;
-                    index === 0 || index === (ship.length - 1) ? pseudoElement.style.height = `${shipSizeHeight}px` : pseudoElement.style.height = `${cellSize}px`;
+                // Create a pseudo-element to cover part of the cell
+                domSquare.style.display = "flex";
+                const pseudoElement = document.createElement('div');
 
-                    pseudoElement.style.backgroundColor = "#365486";
-                    pseudoElement.style.width = `${shipSizeWidth}px`;
-                    pseudoElement.style.margin = `0 ${margin}px 0 ${margin}px`;
-                    pseudoElement.style.zIndex = '1';
+                const cellSize = 40;
+                const shipSizeWidth = 30;
+                const shipSizeHeight = 35;
+                const margin = (cellSize - shipSizeWidth) / 2;
 
-                    // Append the pseudo-element to the cell
-                    domSquare.appendChild(pseudoElement);
-                } else if (axis === "col") {
-                    const key = `${row}, ${col + index}`;
-                    const coordinates = `f-${key.replace(/,\s*/g, '-')}`;
-                    const domSquare = document.getElementById(coordinates);
+                index === 0 ? pseudoElement.style.borderRadius = "100% 100% 0 0" : null;
+                index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 0 100% 100%" : null;
+                index === 0 ? pseudoElement.style.alignSelf = "end" : null;
+                index === 0 || index === (ship.length - 1) ? pseudoElement.style.height = `${shipSizeHeight}px` : pseudoElement.style.height = `${cellSize}px`;
 
-                    domSquare.style.display = "flex";
-                    const pseudoElement = document.createElement('div');
+                atBoard === "f" ? pseudoElement.style.backgroundColor = "#365486" : pseudoElement.style.backgroundColor = "#7f2323";
+                pseudoElement.style.width = `${shipSizeWidth}px`;
+                pseudoElement.style.margin = `0 ${margin}px 0 ${margin}px`;
+                pseudoElement.style.zIndex = '1';
 
-                    const cellSize = 40;
-                    const shipSizeWidth = 35;
-                    const shipSizeHeight = 30;
-                    const margin = (cellSize - shipSizeHeight) / 2;
-                    
+                // Append the pseudo-element to the cell
+                domSquare.appendChild(pseudoElement);
+            } else if (axis === "col") {
+                const key = `${row}, ${col + index}`;
+                const coordinates = `${atBoard}-${key.replace(/,\s*/g, '-')}`;
+                const domSquare = document.getElementById(coordinates);
 
-                    // Adjustments for column axis
-                    index === 0 ? pseudoElement.style.borderRadius = "100% 0 0 100%" : null;
-                    index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 100% 100% 0" : null;
-                    index === 0 || index === (ship.length - 1) ? pseudoElement.style.width = `${shipSizeWidth}px` : pseudoElement.style.width = `${cellSize}px`;
-                    index === 0 ? pseudoElement.style.margin = `${margin}px 0 ${margin}px auto` : pseudoElement.style.margin = `${margin}px 0 ${margin}px 0`;
+                domSquare.style.display = "flex";
+                const pseudoElement = document.createElement('div');
 
-                    pseudoElement.style.backgroundColor = "#365486";
-                    pseudoElement.style.height = `${shipSizeHeight}px`;
-                    pseudoElement.style.zIndex = '1';
+                const cellSize = 40;
+                const shipSizeWidth = 35;
+                const shipSizeHeight = 30;
+                const margin = (cellSize - shipSizeHeight) / 2;
+                
 
-                    domSquare.appendChild(pseudoElement);
-                };
+                // Adjustments for column axis
+                index === 0 ? pseudoElement.style.borderRadius = "100% 0 0 100%" : null;
+                index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 100% 100% 0" : null;
+                index === 0 || index === (ship.length - 1) ? pseudoElement.style.width = `${shipSizeWidth}px` : pseudoElement.style.width = `${cellSize}px`;
+                index === 0 ? pseudoElement.style.margin = `${margin}px 0 ${margin}px auto` : pseudoElement.style.margin = `${margin}px 0 ${margin}px 0`;
+
+                atBoard === "f" ? pseudoElement.style.backgroundColor = "#365486" : pseudoElement.style.backgroundColor = "#7f2323";
+                pseudoElement.style.height = `${shipSizeHeight}px`;
+                pseudoElement.style.zIndex = '1';
+
+                domSquare.appendChild(pseudoElement);
             };
         };
     };
@@ -349,8 +380,6 @@ class DOM {
         const introContainer = document.querySelector(".intro");
         const mainContainer = document.getElementById("main");
         const infoBoardContainer = document.querySelector(".info-board");
-        const playerVsPlayerBtn = document.getElementById("vsPlayer");
-        const playerVsComputerBtn = document.getElementById("vsComputer");
         const startGameBtn = document.getElementById("startGame");
 
         startGameBtn.addEventListener("click", () => {
@@ -375,6 +404,9 @@ class DOM {
                 shipsWrapper.style.display = "none";
                 enemyContainer.style.display = "unset";
                 this.displayInfoAboutCurrentTurn("f");
+
+                // generate ships on computers board
+                game.placeRandomShips(game.computerGameboard);
             };
         });
 

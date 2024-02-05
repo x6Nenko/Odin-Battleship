@@ -91,7 +91,13 @@ test('make random attack', () => {
             "4, 4": {"hits": 1, "length": 3, "sunk": false}, 
             "5, 4": "hit", "6, 4": {"hits": 1, "length": 3, "sunk": false}
         }, 
-        "ships": [{"hits": 1, "length": 3, "sunk": false}],
+        "ships": [
+            [
+                {"hits": 1, "length": 3, "sunk": false},
+                [ '4, 4', '5, 4', '6, 4' ],
+                "row"
+            ]
+        ],
         "lastReceivedAttackInfo": {
             "coordinates": "5, 4",
             "result": "hit",
