@@ -374,7 +374,7 @@ class Game {
             // now its computer turn, so we can run it right away
             setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 100);
+            }, 1000);
         } else {
             // computer used its turn
             this.computer.changeTurn(this.computer, this.player)
@@ -421,7 +421,7 @@ class Game {
             // when attack is succesfull and there are still ships left - keep turn for a computer
             return setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 100);
+            }, 1000);
         };
 
         this.checkAndProceed("player");

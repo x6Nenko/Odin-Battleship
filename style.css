@@ -96,6 +96,7 @@ button {
 
 #winner {
     font-size: 2rem;
+    text-align: center;
 }
 
 /* ================ board labels ================ */
@@ -179,6 +180,7 @@ button {
     margin: auto;
     width: 100%;
     border: 1px solid #0F1035;
+    color: #0F1035;
     background-color: #fff;
     transition: background-color .2s ease-in-out;
 }
@@ -480,5 +482,27 @@ button {
     .friendly-board .board-cell.miss::after, .enemy-board .board-cell.miss::after {
         width: 15px;
         height: 15px;
+    }
+
+    .board-label {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+
+    .enemy-container {
+        margin-top: 10px;
+    }
+
+    #turn {
+        display: none;
+    }
+
+    .info-corner-line {
+        width: 3px;
+    }
+    
+    .info-board {
+        height: 10px;
+        margin-top: 10px;
     }
 }

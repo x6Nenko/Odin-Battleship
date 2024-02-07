@@ -121,7 +121,6 @@ class DOM {
             // and unbing listeners
             this.removeDragAndDropListeners();
             this.showWhosTurn.innerText = "Ready to go! Confirm it.";
-            document.getElementById("rotateShips").style.display = "none";
         };
     };
 
