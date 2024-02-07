@@ -141,9 +141,6 @@ class Player {
         this.isTurn = isTurn;
         this.isComputerMissedNearbyAttack = false;
         this.preLastAttackInfo = {};
-        // this.queue = [];
-        // this.queueDirection = "unknown";
-        // this.succesfullQueueAttacks = [];
     };
 
     attack(enemy, coordinates) {
@@ -188,89 +185,7 @@ class Player {
         } while (!this.isValidMove(enemy.gameboard, randomCoordinates));
 
         return this.attack(enemy, randomCoordinates);
-    };
-
-    // // EXPERIMENTAL FEATURE
-    // bfsAttack(enemy) {
-    //     // If the queue is empty, perform a random attack
-    //     if (this.queue.length === 0) {
-    //         const randomCoordinates = this.generateRandomCoordinates();
-    //         const result = this.attack(enemy, randomCoordinates);
-    
-    //         if (result === "hit") {
-    //             // If it's a hit, generate nearby coordinates and add them to the queue
-    //             const nearbyCoordinates = this.generateNearbyCoordinatesExperimental(randomCoordinates, enemy);
-    //             this.queue.push(...nearbyCoordinates);
-    //         }
-    
-    //         return; // Exit the function after the random attack
-    //     }
-    
-    //     // Continue with the BFS approach
-    //     const currentCoordinates = this.queue.shift(); // Take the first coordinate from the queue
-    //     const result = this.attack(enemy, currentCoordinates);
-    
-    //     if (result === "hit") {
-    //         // If it's a hit, generate nearby coordinates and add them to the queue
-    //         const nearbyCoordinates = this.generateNearbyCoordinatesExperimental(currentCoordinates, enemy);
-    //         this.queue.push(...nearbyCoordinates);
-    //     }
-    // };
-    
-
-    // determineDirection(succesfullQueueAttacks) {
-    //     // Check if nearby coordinates form a line on the X or Y axis
-    //     const xValues = new Set();
-    //     const yValues = new Set();
-    
-    //     for (const coord of succesfullQueueAttacks) {
-    //         const [x, y] = coord.split(",").map(Number);
-    //         xValues.add(x);
-    //         yValues.add(y);
-    //     }
-
-    //     console.log("hit determineDirection");
-    //     console.log(xValues);
-    //     console.log(yValues);
-    
-    //     if (xValues.size > yValues.size) {
-    //         console.log("vertical");
-    //         return "vertical"; // Ship is vertical
-    //     } else if (yValues.size > xValues.size) {
-    //         console.log("horizontal");
-    //         return "horizontal"; // Ship is horizontal
-    //     } else {
-    //         console.log("unknown");
-    //         return "unknown"; // Ship orientation is unknown
-    //     }
-    // };
-
-    // generateNearbyCoordinatesExperimental(center, enemy) {
-    //     const [row, col] = center.split(",").map(Number);
-    
-    //     const directions = [
-    //         [-1, 0], // Up
-    //         [1, 0],  // Down
-    //         [0, -1], // Left
-    //         [0, 1],  // Right
-    //     ];
-
-    //     const nearbyCoordinates = [];
-
-    //     for (const [rowOffset, colOffset] of directions) {
-    //         const newRow = row + rowOffset;
-    //         const newCol = col + colOffset;
-            
-    //         if (newRow >= 0 && newRow <= 9 && newCol >= 0 && newCol <= 9) {
-    //             const newCoordinates = `${newRow}, ${newCol}`;
-    //             if (this.isValidMove(enemy.gameboard, newCoordinates)) {
-    //                 nearbyCoordinates.push(newCoordinates);
-    //             }
-    //         }
-    //     };
-
-    //     return nearbyCoordinates;
-    // };    
+    };   
 
     // run function below until there is no valid place for a ship and then place it
     findRandomPlaceForShip() {
@@ -459,7 +374,7 @@ class Game {
             // now its computer turn, so we can run it right away
             setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 1000);
+            }, 100);
         } else {
             // computer used its turn
             this.computer.changeTurn(this.computer, this.player)
@@ -506,7 +421,7 @@ class Game {
             // when attack is succesfull and there are still ships left - keep turn for a computer
             return setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 1000);
+            }, 100);
         };
 
         this.checkAndProceed("player");

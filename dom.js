@@ -214,11 +214,13 @@ class DOM {
             for (let j = 0; j < 10; j++) {
                 const friendlyDiv = document.createElement("div");
                 friendlyDiv.id = `f-${index}-${j}`;
+                friendlyDiv.classList.add("board-cell");
                 this.friendlyBoard.appendChild(friendlyDiv);
                 friendlyDiv.addEventListener("click", this.handleBoardClick);
 
                 const enemyDiv = document.createElement("div");
                 enemyDiv.id = `e-${index}-${j}`;
+                enemyDiv.classList.add("board-cell");
                 this.enemyBoard.appendChild(enemyDiv);
                 enemyDiv.addEventListener("click", this.handleBoardClick);
             };
@@ -323,21 +325,15 @@ class DOM {
                 // Create a pseudo-element to cover part of the cell
                 domSquare.style.display = "flex";
                 const pseudoElement = document.createElement('div');
+                pseudoElement.classList.add("regular-ship-row-cell");
 
-                const cellSize = 40;
-                const shipSizeWidth = 30;
-                const shipSizeHeight = 35;
-                const margin = (cellSize - shipSizeWidth) / 2;
+                if (index === 0) {
+                    pseudoElement.classList.add("first-ship-row-cell")
+                } else if (index === (ship.length - 1)) {
+                    pseudoElement.classList.add("last-ship-row-cell")
+                };
 
-                index === 0 ? pseudoElement.style.borderRadius = "100% 100% 0 0" : null;
-                index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 0 100% 100%" : null;
-                index === 0 ? pseudoElement.style.alignSelf = "end" : null;
-                index === 0 || index === (ship.length - 1) ? pseudoElement.style.height = `${shipSizeHeight}px` : pseudoElement.style.height = `${cellSize}px`;
-
-                atBoard === "f" ? pseudoElement.style.backgroundColor = "#365486" : pseudoElement.style.backgroundColor = "#7f2323";
-                pseudoElement.style.width = `${shipSizeWidth}px`;
-                pseudoElement.style.margin = `0 ${margin}px 0 ${margin}px`;
-                pseudoElement.style.zIndex = '1';
+                atBoard === "f" ? pseudoElement.classList.add("friendly-ship-cell") : pseudoElement.classList.add("enemy-ship-cell");
 
                 // Append the pseudo-element to the cell
                 domSquare.appendChild(pseudoElement);
@@ -348,23 +344,15 @@ class DOM {
 
                 domSquare.style.display = "flex";
                 const pseudoElement = document.createElement('div');
+                pseudoElement.classList.add("regular-ship-col-cell");
 
-                const cellSize = 40;
-                const shipSizeWidth = 35;
-                const shipSizeHeight = 30;
-                const margin = (cellSize - shipSizeHeight) / 2;
-                
+                if (index === 0) {
+                    pseudoElement.classList.add("first-ship-col-cell")
+                } else if (index === (ship.length - 1)) {
+                    pseudoElement.classList.add("last-ship-col-cell")
+                };
 
-                // Adjustments for column axis
-                index === 0 ? pseudoElement.style.borderRadius = "100% 0 0 100%" : null;
-                index === (ship.length - 1) ? pseudoElement.style.borderRadius = "0 100% 100% 0" : null;
-                index === 0 || index === (ship.length - 1) ? pseudoElement.style.width = `${shipSizeWidth}px` : pseudoElement.style.width = `${cellSize}px`;
-                index === 0 ? pseudoElement.style.margin = `${margin}px 0 ${margin}px auto` : pseudoElement.style.margin = `${margin}px 0 ${margin}px 0`;
-
-                atBoard === "f" ? pseudoElement.style.backgroundColor = "#365486" : pseudoElement.style.backgroundColor = "#7f2323";
-                pseudoElement.style.height = `${shipSizeHeight}px`;
-                pseudoElement.style.zIndex = '1';
-
+                atBoard === "f" ? pseudoElement.classList.add("friendly-ship-cell") : pseudoElement.classList.add("enemy-ship-cell");
                 domSquare.appendChild(pseudoElement);
             };
         };
@@ -475,7 +463,3 @@ const dom = new DOM();
 const game = new Game(dom);
 game.setUpNewGame();
 dom.intro();
-
-// dom.displayBoards();
-// dom.displayFriendlyShips();
-// dom.addEventListenersToShips();

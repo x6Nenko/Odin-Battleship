@@ -235,7 +235,7 @@ button {
   ;
 }
 
-.friendly-board div, .enemy-board div {
+.friendly-board .board-cell, .enemy-board .board-cell {
     position: relative;
     width: 40px;
     height: 40px;
@@ -244,7 +244,7 @@ button {
     background-color: #ADD8E6;
 }
 
-.friendly-board div.hit::after, .enemy-board div.hit::after {
+.friendly-board .board-cell.hit::after, .enemy-board .board-cell.hit::after {
     content: "";
     position: absolute;
     width: 20px;
@@ -257,7 +257,7 @@ button {
     z-index: 2;
 }
 
-.friendly-board div.miss::after, .enemy-board div.miss::after {
+.friendly-board .board-cell.miss::after, .enemy-board .board-cell.miss::after {
     content: "";
     position: absolute;
     width: 20px;
@@ -330,9 +330,61 @@ button {
     background-color: #ffd3b6 !important;
 }
 
+/* ================ dynamic onboard ship styles ================ */
+
+/* general */
+
+.friendly-ship-cell {
+    background-color: #365486;
+    z-index: 1;
+}
+
+.enemy-ship-cell {
+    background-color: #7f2323;
+    z-index: 1;
+}
+
+/* row */
+
+.regular-ship-row-cell {
+    height: 40px;
+    width: 30px;
+    margin: 0px 5px;
+}
+
+.first-ship-row-cell {
+    border-radius: 100% 100% 0 0;
+    height: 35px;
+    align-self: end;
+}
+
+.last-ship-row-cell {
+    border-radius: 0 0 100% 100%;
+    height: 35px;
+}
+
+/* col */
+
+.regular-ship-col-cell {
+    height: 30px;
+    width: 40px;
+    margin: 5px 0px;
+}
+
+.first-ship-col-cell {
+    border-radius: 100% 0 0 100%;
+    width: 35px;
+    margin: 5px 0px 5px auto;
+}
+
+.last-ship-col-cell {
+    border-radius: 0 100% 100% 0;
+    width: 35px;
+}
+
 /* ================ media queries ================ */
 
-@media screen and (max-width: 870px) {
+@media screen and (max-width: 900px) {
     #main {
         flex-direction: column;
         align-items: center;
@@ -360,16 +412,73 @@ button {
 }
 
 @media screen and (max-width: 480px) {
+    #main {
+        padding-top: 20px;
+    }
+
+    .intro, .outro {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
     .intro h1 {
         font-size: 2rem;
     }
 
-    .friendly-board div, .enemy-board div {
+    .friendly-board .board-cell, .enemy-board .board-cell {
         width: 30px;
         height: 30px;
     }
 
     .friendly-board, .enemy-board {
         grid-template-columns: repeat(10, 30px);
+    }
+
+    .regular-ship-row-cell {
+        height: 30px;
+        width: 20px;
+    }
+
+    .first-ship-row-cell {
+        height: 25px;
+    }
+
+    .last-ship-row-cell {
+        height: 25px;
+    }
+
+    .regular-ship-col-cell {
+        height: 20px;
+        width: 30px;
+    }
+
+    .first-ship-col-cell {
+        width: 25px;
+    }
+
+    .last-ship-col-cell {
+        width: 25px;
+    }
+
+    #rotateShips {
+        display: none !important;
+    }
+
+    .ships {
+        display: none !important;
+    }
+
+    #winner {
+        font-size: 1.5rem;
+    }
+
+    .friendly-board .board-cell.hit::after, .enemy-board .board-cell.hit::after {
+        width: 15px;
+        height: 15px;
+    }
+    
+    .friendly-board .board-cell.miss::after, .enemy-board .board-cell.miss::after {
+        width: 15px;
+        height: 15px;
     }
 }
