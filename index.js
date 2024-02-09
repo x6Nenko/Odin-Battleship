@@ -209,27 +209,17 @@ class Player {
     };  
     
     attackTails(enemy) {
-        console.log("Yes");
-        //console.log(this.trackedTails);
-        // this.trackedTails.forEach(cell => {
-        //     console.log(cell["coordinates"][0]);
-        //     console.log(cell["coordinates"][3]);
-        // });
-
         if (this.isChangedDirection === false) {
+            // if its true then direction was reversed, so no need to regenerate it
             this.getTailsDirection();
         };
 
         this.generateQueue();
-        console.log(this.queue);
 
         if (this.queue.length === 0) {
-            console.log("ship must be sunked, go random again");
-            this.trackedTails = [];
-            this.queue = [];
-            this.trackedAxis = null;
-            this.trackedDirection = null;
-            return null
+            // ship must be sunked
+            this.clearTailsBreadCrumbs();
+            return this.randomAttack(enemy);
         };
 
         const coordinates = this.queue.shift();
@@ -238,40 +228,28 @@ class Player {
         if (this.isValidMove(enemy.gameboard, coordinatesStr) && coordinates[0] <= 9 && coordinates[0] >= 0 && coordinates[1] <= 9 && coordinates[1] >= 0) {
             return this.attack(enemy, coordinatesStr)
         } else {
-            // if the move isn't valid, and the ship isn't sunk then
-            // change the direction
-            // clear queue
-            console.log(coordinatesStr + " isnt valid?");
-            // this.queue = [];
-            console.log("time to change direction " + this.trackedDirection);
             if (this.isChangedDirection) {
-                this.trackedTails = [];
-                this.queue = [];
-                this.trackedAxis = null;
-                this.trackedDirection = null;
-                this.isChangedDirection = false;
+                // ship must be sunked, back to random attacks
+                this.clearTailsBreadCrumbs();
                 return this.randomAttack(enemy);
-            }
+            };
+
+            // Attack in reversed direction
             this.reverseDirection();
-            console.log(this.trackedDirection);
             this.isChangedDirection = true;
             this.attackTails(enemy);
-            return null
         }
     };
 
+    clearTailsBreadCrumbs() {
+        this.trackedTails = [];
+        this.queue = [];
+        this.trackedAxis = null;
+        this.trackedDirection = null;
+        this.isChangedDirection = false;
+    };
+
     getTailsDirection() {
-        console.log("getTailsDirection");
-        const rowDirections = [
-            [-1, 0], // Up
-            [1, 0],  // Down
-        ];
-    
-        const colDirections = [
-            [0, -1], // Left
-            [0, 1],  // Right
-        ];
-    
         this.trackedDirection = null;
     
         // Extract the coordinates
@@ -296,8 +274,8 @@ class Player {
 
     generateQueue() {
         const queue = [];
-
         let firstOrLast;
+        
         if (this.isChangedDirection) {
             // initial cell is the first attacked cell cuz it was reversed
             firstOrLast = this.trackedTails[0];
@@ -306,8 +284,6 @@ class Player {
             firstOrLast = this.trackedTails[this.trackedTails.length - 1];
         };
 
-        console.log(this.trackedTails);
-        console.log(firstOrLast);
         let [row, col] = firstOrLast["coordinates"].split(", ").map(Number);
         row += this.trackedDirection[0];
         col += this.trackedDirection[1];
