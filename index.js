@@ -20,6 +20,7 @@ class Gameboard {
     constructor() {
         this.board = {};
         this.ships = [];
+        this.receivedAttacksHistory = [];
         this.lastReceivedAttackInfo = null;
     };
 
@@ -103,10 +104,14 @@ class Gameboard {
 
             // track succesfull attack
             this.lastReceivedAttackInfo = {"coordinates": coordinates, "result": "hit"};
+            this.receivedAttacksHistory.push({"coordinates": coordinates, "result": "hit"});
+
             return this.board[coordinates] = "hit";
         } else {
             // track missed attack
             this.lastReceivedAttackInfo = {"coordinates": coordinates, "result": "null"};
+            this.receivedAttacksHistory.push({"coordinates": coordinates, "result": "null"});
+
             return this.board[coordinates] = null;
         };
     };
@@ -139,16 +144,32 @@ class Player {
         this.name = name;
         this.gameboard = gameboard;
         this.isTurn = isTurn;
+        // Smart Computer
         this.isComputerMissedNearbyAttack = false;
         this.preLastAttackInfo = {};
+        this.trackedTails = [];
+        this.queue = [];
+        this.trackedAxis = null;
+        this.trackedDirection = null;
+        this.isChangedDirection = false;
     };
 
     attack(enemy, coordinates) {
-        return enemy.gameboard.receiveAttack(coordinates);
+        const result = enemy.gameboard.receiveAttack(coordinates);
+        if (result === "hit") {
+            this.trackedTails.push({"coordinates": coordinates, "result": "hit"});
+        };
+
+        return result;
     };
 
     randomAttack(enemy) {
         let randomCoordinates;
+
+        if (this.trackedTails.length > 1) {
+            // there is attacked ship that is not sunk yet
+            return this.attackTails(enemy);
+        };
 
         if (enemy.gameboard.lastReceivedAttackInfo !== null) {
             // because when its null - means there are no received attacks yet
@@ -157,7 +178,7 @@ class Player {
                 randomCoordinates = this.generateNearbyCoordinates(enemy.gameboard.lastReceivedAttackInfo["coordinates"], enemy);
 
                 // save info about attack to process it further in case computer not finishes the ship
-                this.preLastAttackInfo = {...enemy.gameboard.lastReceivedAttackInfo};
+                this.preLastAttackInfo = {...enemy.gameboard.lastReceivedAttackInfo};;
 
                 const result = this.attack(enemy, randomCoordinates);
 
@@ -167,7 +188,7 @@ class Player {
 
                 return result
             } else if (this.isComputerMissedNearbyAttack === true) {
-                // if previous attack was succesfull - attack nearby coordinates
+                // if previous attack wasn't succesfull - attack nearby coordinates to find correct direction
                 randomCoordinates = this.generateNearbyCoordinates(this.preLastAttackInfo["coordinates"], enemy);
 
                 const result = this.attack(enemy, randomCoordinates);
@@ -185,7 +206,140 @@ class Player {
         } while (!this.isValidMove(enemy.gameboard, randomCoordinates));
 
         return this.attack(enemy, randomCoordinates);
-    };   
+    };  
+    
+    attackTails(enemy) {
+        console.log("Yes");
+        //console.log(this.trackedTails);
+        // this.trackedTails.forEach(cell => {
+        //     console.log(cell["coordinates"][0]);
+        //     console.log(cell["coordinates"][3]);
+        // });
+
+        if (this.isChangedDirection === false) {
+            this.getTailsDirection();
+        };
+
+        this.generateQueue();
+        console.log(this.queue);
+
+        if (this.queue.length === 0) {
+            console.log("ship must be sunked, go random again");
+            this.trackedTails = [];
+            this.queue = [];
+            this.trackedAxis = null;
+            this.trackedDirection = null;
+            return null
+        };
+
+        const coordinates = this.queue.shift();
+        const coordinatesStr = `${coordinates[0]}, ${coordinates[1]}`;
+
+        if (this.isValidMove(enemy.gameboard, coordinatesStr) && coordinates[0] <= 9 && coordinates[0] >= 0 && coordinates[1] <= 9 && coordinates[1] >= 0) {
+            return this.attack(enemy, coordinatesStr)
+        } else {
+            // if the move isn't valid, and the ship isn't sunk then
+            // change the direction
+            // clear queue
+            console.log(coordinatesStr + " isnt valid?");
+            // this.queue = [];
+            console.log("time to change direction " + this.trackedDirection);
+            if (this.isChangedDirection) {
+                this.trackedTails = [];
+                this.queue = [];
+                this.trackedAxis = null;
+                this.trackedDirection = null;
+                this.isChangedDirection = false;
+                return this.randomAttack(enemy);
+            }
+            this.reverseDirection();
+            console.log(this.trackedDirection);
+            this.isChangedDirection = true;
+            this.attackTails(enemy);
+            return null
+        }
+    };
+
+    getTailsDirection() {
+        console.log("getTailsDirection");
+        const rowDirections = [
+            [-1, 0], // Up
+            [1, 0],  // Down
+        ];
+    
+        const colDirections = [
+            [0, -1], // Left
+            [0, 1],  // Right
+        ];
+    
+        this.trackedDirection = null;
+    
+        // Extract the coordinates
+        const coordinates = this.trackedTails.map(cell => cell.coordinates);
+        const firstCoord = coordinates[0].split(", ").map(Number);
+        const secondCoord = coordinates[1].split(", ").map(Number);
+    
+        // Determine the direction based on the difference between the coordinates
+        const diffRow = secondCoord[0] - firstCoord[0];
+        const diffCol = secondCoord[1] - firstCoord[1];
+    
+        if (diffRow === 0) {
+            // If its 0, it's moving along the same row (col axis)
+            this.trackedAxis = 'col';
+            this.trackedDirection = diffCol > 0 ? [0, 1] : [0, -1]; // Check where it goes: Left or Right
+        } else if (diffCol === 0) {
+            // Ifits is 0, it's moving along the same column (row axis)
+            this.trackedAxis = 'row';
+            this.trackedDirection = diffRow > 0 ? [1, 0] : [-1, 0]; // Check where it goes: Up or Down
+        };
+    };
+
+    generateQueue() {
+        const queue = [];
+
+        let firstOrLast;
+        if (this.isChangedDirection) {
+            // initial cell is the first attacked cell cuz it was reversed
+            firstOrLast = this.trackedTails[0];
+        } else {
+            // initial cell is the last attacked cell
+            firstOrLast = this.trackedTails[this.trackedTails.length - 1];
+        };
+
+        console.log(this.trackedTails);
+        console.log(firstOrLast);
+        let [row, col] = firstOrLast["coordinates"].split(", ").map(Number);
+        row += this.trackedDirection[0];
+        col += this.trackedDirection[1];
+    
+        // Assuming ship size is 5 for the largest ship
+        for (let i = 0; i < 5; i++) {
+            queue.push([row, col]);
+            row += this.trackedDirection[0]; // Update row based on direction
+            col += this.trackedDirection[1]; // Update column based on direction
+        };
+
+        // Store this queue for further processing
+        this.queue = queue;
+    };
+
+    reverseDirection() {
+        if (this.trackedDirection) {
+            if (this.trackedDirection[0] === -1) {
+                // From Up to Down
+                this.trackedDirection = [1, 0];
+            } else if (this.trackedDirection[0] === 1) {
+                // From Down to Up
+                this.trackedDirection = [-1, 0];
+            } else if (this.trackedDirection[1] === -1) {
+                // From Left to Right
+                this.trackedDirection = [0, 1];
+            } else if (this.trackedDirection[1] === 1) {
+                // From Right to Left
+                this.trackedDirection = [0, -1];
+            };
+        };
+    };
 
     // run function below until there is no valid place for a ship and then place it
     findRandomPlaceForShip() {
@@ -230,6 +384,7 @@ class Player {
 
             if (newRow >= 0 && newRow <= 9 && newCol >= 0 && newCol <= 9) {
                 if (this.isValidMove(enemy.gameboard, newCoordinates)) {
+                    this.trackedDirection = [rowOffset, colOffset];
                     return newCoordinates;
                 };
             };
@@ -374,7 +529,7 @@ class Game {
             // now its computer turn, so we can run it right away
             setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 1000);
+            }, 100);
         } else {
             // computer used its turn
             this.computer.changeTurn(this.computer, this.player)
@@ -421,7 +576,7 @@ class Game {
             // when attack is succesfull and there are still ships left - keep turn for a computer
             return setTimeout(() => {
                 this.handleComputersRandomAttack();
-            }, 1000);
+            }, 100);
         };
 
         this.checkAndProceed("player");
