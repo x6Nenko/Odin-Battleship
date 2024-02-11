@@ -23,16 +23,16 @@ test('create new boards', () => {
     const game = new Game();
     game.createBoards();
 
-    expect(game.playerGameboard).toEqual({ board: {}, ships: [], lastReceivedAttackInfo: null, });
-    expect(game.computerGameboard).toEqual({ board: {}, ships: [], lastReceivedAttackInfo: null, });
+    expect(game.playerGameboard).toEqual({ board: {}, ships: [], receivedAttacksHistory: [], lastReceivedAttackInfo: null, });
+    expect(game.computerGameboard).toEqual({ board: {}, ships: [], receivedAttacksHistory: [], lastReceivedAttackInfo: null, });
 });
 
 test('create new players', () => {
     const game = new Game();
     game.createPlayers();
 
-    expect(game.player).toEqual({ name: 'nickname', gameboard: null, isTurn: true, isComputerMissedNearbyAttack: false, preLastAttackInfo: expect.any(Object) });
-    expect(game.computer).toEqual({ name: 'computer', gameboard: null, isTurn: false, isComputerMissedNearbyAttack: false, preLastAttackInfo: expect.any(Object) });
+    expect(game.player).toEqual({ name: 'nickname', gameboard: null, isTurn: true, isChangedDirection: false, queue: [], trackedAxis: null, trackedDirection: null, trackedTails: [], isComputerMissedNearbyAttack: false, preLastAttackInfo: expect.any(Object) });
+    expect(game.computer).toEqual({ name: 'computer', gameboard: null, isTurn: false, isChangedDirection: false, queue: [], trackedAxis: null, trackedDirection: null, trackedTails: [], isComputerMissedNearbyAttack: false, preLastAttackInfo: expect.any(Object) });
 });
 
 test('place the ships for computer', () => {

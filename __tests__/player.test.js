@@ -98,6 +98,7 @@ test('make random attack', () => {
                 "row"
             ]
         ],
+        "receivedAttacksHistory": [ { coordinates: '5, 4', result: 'hit' } ],
         "lastReceivedAttackInfo": {
             "coordinates": "5, 4",
             "result": "hit",
